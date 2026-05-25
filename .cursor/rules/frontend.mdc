@@ -1,0 +1,86 @@
+---
+description: Frontend conventions and patterns for reddit-auto
+alwaysApply: true
+---
+
+# reddit-auto frontend conventions
+
+Next.js 15 application with App Router for managing Reddit accounts.
+
+## Architecture
+
+```
+src/
+├── app/              → App Router pages and layouts
+├── components/       → React components
+│   ├── ui/          → Reusable UI primitives (Button, Input, Card, etc.)
+│   ├── accounts/    → Account-specific components
+│   └── layout/      → Layout components (Sidebar, Header)
+├── lib/             → Utilities and API client
+│   ├── api.ts       → Fetch wrapper for backend API
+│   └── types.ts     → Shared TypeScript types
+└── hooks/           → Custom React hooks
+```
+
+## Conventions
+
+### Components
+
+- **Server Components by default** — only add `'use client'` when needed (event handlers, hooks, browser APIs).
+- **Named exports** — no default exports except for pages.
+- **Tailwind CSS** — use Tailwind utility classes for styling.
+- **Props interfaces** — define `interface ComponentProps` above each component.
+
+### Data fetching
+
+- Use custom hooks (`useAccounts`, `useAccount`) for data fetching in client components.
+- API calls go through `lib/api.ts` — never call `fetch` directly in components.
+- Handle loading and error states in every data-fetching component.
+
+### Types
+
+- Shared types live in `lib/types.ts`.
+- Types match the backend API schema (Account, ActionLog, ActionResult, etc.).
+- Use `type` imports when only importing types.
+
+### Patterns
+
+```typescript
+// Page component (always use default export)
+export default function AccountsPage() { ... }
+
+// Regular component (use named export)
+export function AccountList({ accounts }: AccountListProps) { ... }
+
+// Hook
+export function useAccounts(): UseAccountsReturn { ... }
+```
+
+### API client
+
+The `api` object in `lib/api.ts` mirrors the backend endpoints:
+
+```typescript
+api.accounts.list()
+api.accounts.get(id)
+api.accounts.create(data)
+api.accounts.update(id, data)
+api.accounts.delete(id)
+api.actions.login(accountId)
+```
+
+## Do's
+
+- Keep components focused and small
+- Use TypeScript strict mode
+- Handle loading and error states
+- Use `'use client'` directive only when needed
+- Add proper TypeScript types to all functions and components
+
+## Don'ts
+
+- Don't use Pages Router (`pages/` directory)
+- Don't use `any` type
+- Don't use inline styles (use Tailwind instead)
+- Don't call API directly in components (use hooks or `lib/api.ts`)
+- Don't disable ESLint rules without good reason

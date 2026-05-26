@@ -2,7 +2,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { api, ApiError } from '@/lib/api';
-import type { Account, ActionLog, ActionResult } from '@/lib/types';
+import type {
+  Account,
+  ActionLog,
+  ActionResult,
+  ExecuteReplyManualInput,
+  ReplyManualOutput,
+} from '@/lib/types';
 
 interface UseAccountReturn {
   account: Account | null;
@@ -12,6 +18,9 @@ interface UseAccountReturn {
   refresh: () => Promise<void>;
   executeLogin: () => Promise<ActionResult>;
   executeRegister: () => Promise<ActionResult>;
+  executeReplyManual: (
+    input: ExecuteReplyManualInput,
+  ) => Promise<ActionResult<ReplyManualOutput>>;
 }
 
 export function useAccount(id: string): UseAccountReturn {
@@ -57,6 +66,17 @@ export function useAccount(id: string): UseAccountReturn {
     return result;
   }, [id, fetchAccount]);
 
+  const executeReplyManual = useCallback(
+    async (
+      input: ExecuteReplyManualInput,
+    ): Promise<ActionResult<ReplyManualOutput>> => {
+      const result = await api.actions.replyManual(id, input);
+      await fetchAccount();
+      return result;
+    },
+    [id, fetchAccount],
+  );
+
   return {
     account,
     logs,
@@ -65,5 +85,6 @@ export function useAccount(id: string): UseAccountReturn {
     refresh: fetchAccount,
     executeLogin,
     executeRegister,
+    executeReplyManual,
   };
 }

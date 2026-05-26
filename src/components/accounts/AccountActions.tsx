@@ -1,23 +1,43 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Card, CardHeader, CardContent, Badge } from '@/components/ui';
-import type { ActionResult, ActionLog } from '@/lib/types';
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardContent,
+  Badge,
+  Input,
+} from '@/components/ui';
+import type {
+  ActionResult,
+  ActionLog,
+  ExecuteReplyManualInput,
+  ReplyManualOutput,
+} from '@/lib/types';
 
 interface AccountActionsProps {
   onLogin: () => Promise<ActionResult>;
   onRegister: () => Promise<ActionResult>;
+  onReplyManual: (
+    input: ExecuteReplyManualInput,
+  ) => Promise<ActionResult<ReplyManualOutput>>;
   logs: ActionLog[];
 }
 
 export function AccountActions({
   onLogin,
   onRegister,
+  onReplyManual,
   logs,
 }: AccountActionsProps) {
   const [loginLoading, setLoginLoading] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
-  const [lastResult, setLastResult] = useState<ActionResult | null>(null);
+  const [replyManualLoading, setReplyManualLoading] = useState(false);
+  const [replyUrl, setReplyUrl] = useState('');
+  const [lastResult, setLastResult] = useState<ActionResult<unknown> | null>(
+    null,
+  );
 
   const handleLogin = async () => {
     setLoginLoading(true);
@@ -41,6 +61,24 @@ export function AccountActions({
     }
   };
 
+  const handleReplyManual = async () => {
+    if (!replyUrl.trim()) return;
+
+    setReplyManualLoading(true);
+    setLastResult(null);
+    try {
+      const result = await onReplyManual({ url: replyUrl.trim() });
+      setLastResult(result);
+      if (result.success) {
+        setReplyUrl('');
+      }
+    } finally {
+      setReplyManualLoading(false);
+    }
+  };
+
+  const isAnyLoading = loginLoading || registerLoading || replyManualLoading;
+
   return (
     <div className="space-y-6">
       <Card>
@@ -52,21 +90,45 @@ export function AccountActions({
             <Button
               onClick={handleLogin}
               loading={loginLoading}
-              disabled={registerLoading}
+              disabled={isAnyLoading && !loginLoading}
             >
               Login
             </Button>
             <Button
               onClick={handleRegister}
               loading={registerLoading}
-              disabled={loginLoading}
+              disabled={isAnyLoading && !registerLoading}
               variant="secondary"
             >
               Register
             </Button>
-            <Button variant="secondary" disabled>
-              Reply (Coming Soon)
-            </Button>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Reply to Post/Comment
+            </label>
+            <div className="flex gap-3">
+              <Input
+                type="url"
+                placeholder="https://www.reddit.com/r/subreddit/comments/..."
+                value={replyUrl}
+                onChange={(e) => setReplyUrl(e.target.value)}
+                disabled={isAnyLoading}
+                className="flex-1"
+              />
+              <Button
+                onClick={handleReplyManual}
+                loading={replyManualLoading}
+                disabled={(isAnyLoading && !replyManualLoading) || !replyUrl.trim()}
+                variant="secondary"
+              >
+                Open Reply
+              </Button>
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Opens the post in a browser for manual reply
+            </p>
           </div>
 
           {lastResult && (

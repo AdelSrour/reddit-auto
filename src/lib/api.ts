@@ -5,6 +5,8 @@ import type {
   CreateAccountInput,
   UpdateAccountInput,
   ExecuteReplyInput,
+  ExecuteReplyManualInput,
+  ReplyManualOutput,
 } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
@@ -88,6 +90,15 @@ export const api = {
       input: ExecuteReplyInput,
     ): Promise<ActionResult> =>
       fetchApi(`/accounts/${accountId}/actions/reply`, {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+
+    replyManual: (
+      accountId: string,
+      input: ExecuteReplyManualInput,
+    ): Promise<ActionResult<ReplyManualOutput>> =>
+      fetchApi(`/accounts/${accountId}/actions/reply-manual`, {
         method: 'POST',
         body: JSON.stringify(input),
       }),

@@ -7,6 +7,7 @@ const navigation = [
   { name: 'Dashboard', href: '/' },
   { name: 'Accounts', href: '/accounts' },
   { name: 'F5Bot', href: '/f5bot' },
+  { name: 'Automation', href: '/automation' },
 ];
 
 export function Sidebar() {

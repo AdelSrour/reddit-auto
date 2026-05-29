@@ -1,0 +1,97 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { api, ApiError } from '@/lib/api';
+import type {
+  F5botMatch,
+  F5botQueryParams,
+  F5botSyncResult,
+  PaginationMeta,
+} from '@/lib/types';
+
+interface UseF5botMatchesReturn {
+  matches: F5botMatch[];
+  meta: PaginationMeta | null;
+  loading: boolean;
+  syncing: boolean;
+  error: string | null;
+  syncResult: F5botSyncResult | null;
+  params: F5botQueryParams;
+  setParams: (params: F5botQueryParams) => void;
+  setPage: (page: number) => void;
+  sync: () => Promise<void>;
+  refresh: () => Promise<void>;
+}
+
+export function useF5botMatches(initialParams?: F5botQueryParams): UseF5botMatchesReturn {
+  const [matches, setMatches] = useState<F5botMatch[]>([]);
+  const [meta, setMeta] = useState<PaginationMeta | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [syncResult, setSyncResult] = useState<F5botSyncResult | null>(null);
+  const [params, setParams] = useState<F5botQueryParams>(initialParams ?? { page: 1, limit: 20 });
+
+  const fetchMatches = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.f5bot.list(params);
+      setMatches(response.data);
+      setMeta(response.meta);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError('Failed to fetch matches');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [params]);
+
+  useEffect(() => {
+    fetchMatches();
+  }, [fetchMatches]);
+
+  const setPage = useCallback((page: number) => {
+    setParams((prev) => ({ ...prev, page }));
+  }, []);
+
+  const sync = useCallback(async () => {
+    setSyncing(true);
+    setSyncResult(null);
+    setError(null);
+    try {
+      const result = await api.f5bot.sync();
+      setSyncResult(result);
+      await fetchMatches();
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError('Failed to sync mailbox');
+      }
+    } finally {
+      setSyncing(false);
+    }
+  }, [fetchMatches]);
+
+  const refresh = useCallback(async () => {
+    await fetchMatches();
+  }, [fetchMatches]);
+
+  return {
+    matches,
+    meta,
+    loading,
+    syncing,
+    error,
+    syncResult,
+    params,
+    setParams,
+    setPage,
+    sync,
+    refresh,
+  };
+}

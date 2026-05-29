@@ -7,6 +7,10 @@ import type {
   ExecuteReplyInput,
   ExecuteReplyManualInput,
   ReplyManualOutput,
+  F5botMatch,
+  F5botQueryParams,
+  F5botSyncResult,
+  PaginatedResponse,
 } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
@@ -101,6 +105,29 @@ export const api = {
       fetchApi(`/accounts/${accountId}/actions/reply-manual`, {
         method: 'POST',
         body: JSON.stringify(input),
+      }),
+  },
+
+  f5bot: {
+    list: (params?: F5botQueryParams): Promise<PaginatedResponse<F5botMatch>> => {
+      const searchParams = new URLSearchParams();
+      if (params?.page !== undefined) searchParams.set('page', String(params.page));
+      if (params?.limit !== undefined) searchParams.set('limit', String(params.limit));
+      if (params?.keyword !== undefined && params.keyword !== '') searchParams.set('keyword', params.keyword);
+      if (params?.sourceType !== undefined) searchParams.set('sourceType', params.sourceType);
+      if (params?.subreddit !== undefined && params.subreddit !== '') searchParams.set('subreddit', params.subreddit);
+      if (params?.minRating !== undefined) searchParams.set('minRating', String(params.minRating));
+      if (params?.fromDate !== undefined) searchParams.set('fromDate', params.fromDate);
+      if (params?.toDate !== undefined) searchParams.set('toDate', params.toDate);
+      const query = searchParams.toString();
+      return fetchApi(`/f5bot/matches${query ? `?${query}` : ''}`);
+    },
+
+    get: (id: string): Promise<F5botMatch> => fetchApi(`/f5bot/matches/${id}`),
+
+    sync: (): Promise<F5botSyncResult> =>
+      fetchApi('/f5bot/sync', {
+        method: 'POST',
       }),
   },
 };

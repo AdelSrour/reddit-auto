@@ -65,3 +65,50 @@ export interface ReplyManualOutput {
   sourceUrl: string;
   landedUrl: string;
 }
+
+// F5Bot types
+export type F5botSourceType = 'POST' | 'COMMENT';
+
+export interface F5botMatch {
+  id: string;
+  keyword: string;
+  sourceType: F5botSourceType;
+  subreddit: string;
+  title: string;
+  author: string;
+  sourceUrl: string;
+  content: string;
+  rating: number | null;
+  ratingReason: string | null;
+  suggestedReply: string | null;
+  createdAt: string;
+}
+
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: PaginationMeta;
+}
+
+export interface F5botQueryParams {
+  page?: number;
+  limit?: number;
+  keyword?: string;
+  sourceType?: F5botSourceType;
+  subreddit?: string;
+  minRating?: number;
+  fromDate?: string;
+  toDate?: string;
+}
+
+export interface F5botSyncResult {
+  emailsProcessed: number;
+  newMatches: number;
+  skippedDuplicates: number;
+}

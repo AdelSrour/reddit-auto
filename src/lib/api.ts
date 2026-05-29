@@ -11,6 +11,16 @@ import type {
   F5botQueryParams,
   F5botSyncResult,
   PaginatedResponse,
+  AutomationInstance,
+  CreateInstanceInput,
+  UpdateInstanceInput,
+  AvailablePost,
+  AutomationReply,
+  ScheduledReply,
+  ScheduleReplyInput,
+  ExecuteAutoReplyInput,
+  ReplyOutput,
+  AvailableAccount,
 } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
@@ -128,6 +138,80 @@ export const api = {
     sync: (): Promise<F5botSyncResult> =>
       fetchApi('/f5bot/sync', {
         method: 'POST',
+      }),
+  },
+
+  automation: {
+    instances: {
+      list: (): Promise<AutomationInstance[]> =>
+        fetchApi('/automation/instances'),
+
+      get: (id: string): Promise<AutomationInstance> =>
+        fetchApi(`/automation/instances/${id}`),
+
+      create: (data: CreateInstanceInput): Promise<AutomationInstance> =>
+        fetchApi('/automation/instances', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+
+      update: (id: string, data: UpdateInstanceInput): Promise<AutomationInstance> =>
+        fetchApi(`/automation/instances/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify(data),
+        }),
+
+      delete: (id: string): Promise<void> =>
+        fetchApi(`/automation/instances/${id}`, {
+          method: 'DELETE',
+        }),
+
+      getPosts: (id: string, page?: number, limit?: number): Promise<PaginatedResponse<AvailablePost>> => {
+        const searchParams = new URLSearchParams();
+        if (page !== undefined) searchParams.set('page', String(page));
+        if (limit !== undefined) searchParams.set('limit', String(limit));
+        const query = searchParams.toString();
+        return fetchApi(`/automation/instances/${id}/posts${query ? `?${query}` : ''}`);
+      },
+
+      getCompleted: (id: string, page?: number, limit?: number): Promise<PaginatedResponse<AutomationReply>> => {
+        const searchParams = new URLSearchParams();
+        if (page !== undefined) searchParams.set('page', String(page));
+        if (limit !== undefined) searchParams.set('limit', String(limit));
+        const query = searchParams.toString();
+        return fetchApi(`/automation/instances/${id}/completed${query ? `?${query}` : ''}`);
+      },
+
+      getScheduled: (id: string, page?: number, limit?: number): Promise<PaginatedResponse<ScheduledReply>> => {
+        const searchParams = new URLSearchParams();
+        if (page !== undefined) searchParams.set('page', String(page));
+        if (limit !== undefined) searchParams.set('limit', String(limit));
+        const query = searchParams.toString();
+        return fetchApi(`/automation/instances/${id}/scheduled${query ? `?${query}` : ''}`);
+      },
+
+      reply: (id: string, input: ExecuteAutoReplyInput): Promise<ActionResult<ReplyOutput>> =>
+        fetchApi(`/automation/instances/${id}/reply`, {
+          method: 'POST',
+          body: JSON.stringify(input),
+        }),
+
+      schedule: (id: string, input: ScheduleReplyInput): Promise<ScheduledReply> =>
+        fetchApi(`/automation/instances/${id}/schedule`, {
+          method: 'POST',
+          body: JSON.stringify(input),
+        }),
+    },
+
+    subreddits: (): Promise<string[]> =>
+      fetchApi('/automation/subreddits'),
+
+    availableAccounts: (): Promise<AvailableAccount[]> =>
+      fetchApi('/automation/accounts/available'),
+
+    cancelScheduled: (id: string): Promise<void> =>
+      fetchApi(`/automation/scheduled/${id}`, {
+        method: 'DELETE',
       }),
   },
 };

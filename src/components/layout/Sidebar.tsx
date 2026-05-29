@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 const navigation = [
   { name: 'Dashboard', href: '/' },
   { name: 'Accounts', href: '/accounts' },
+  { name: 'F5Bot', href: '/f5bot' },
 ];
 
 export function Sidebar() {

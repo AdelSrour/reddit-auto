@@ -37,6 +37,19 @@ export default function HomePage() {
           </Card>
         </Link>
 
+        <Link href="/f5bot">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900">
+                F5Bot Matches
+              </h3>
+              <p className="mt-2 text-sm text-gray-500">
+                View Reddit posts and comments from F5Bot alerts
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+
         <Card className="opacity-60">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold text-gray-900">

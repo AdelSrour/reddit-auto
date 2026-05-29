@@ -50,16 +50,18 @@ export default function HomePage() {
           </Card>
         </Link>
 
-        <Card className="opacity-60">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Automation (Coming Soon)
-            </h3>
-            <p className="mt-2 text-sm text-gray-500">
-              Schedule automated actions for your accounts
-            </p>
-          </CardContent>
-        </Card>
+        <Link href="/automation">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Automation
+              </h3>
+              <p className="mt-2 text-sm text-gray-500">
+                Create and manage automation instances for your accounts
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
     </div>
   );

@@ -48,7 +48,7 @@ export function ScheduledRepliesTable({
 
   if (scheduled.length === 0) {
     return (
-      <div className="text-center py-6 text-gray-500 text-sm">
+      <div className="text-center py-6 text-muted-foreground text-sm">
         No scheduled replies
       </div>
     );
@@ -75,7 +75,7 @@ export function ScheduledRepliesTable({
                   href={item.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-900 hover:text-blue-600 line-clamp-1"
+                  className="text-foreground hover:text-primary line-clamp-1"
                   title={item.title}
                 >
                   {item.title}
@@ -84,7 +84,7 @@ export function ScheduledRepliesTable({
               <TableCell>
                 <div>
                   <div className="text-sm">{formatDate(item.scheduledAt)}</div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-muted-foreground">
                     {getTimeUntil(item.scheduledAt)}
                   </div>
                 </div>

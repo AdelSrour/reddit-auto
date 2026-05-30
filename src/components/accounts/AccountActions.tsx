@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { LogIn, MessageSquareReply, UserPlus } from 'lucide-react';
 import {
   Button,
   Card,
@@ -83,7 +84,7 @@ export function AccountActions({
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-semibold text-gray-900">Actions</h2>
+          <h2 className="text-lg font-semibold text-foreground">Actions</h2>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3">
@@ -92,6 +93,7 @@ export function AccountActions({
               loading={loginLoading}
               disabled={isAnyLoading && !loginLoading}
             >
+              <LogIn className="mr-2 h-4 w-4" aria-hidden="true" />
               Login
             </Button>
             <Button
@@ -100,12 +102,13 @@ export function AccountActions({
               disabled={isAnyLoading && !registerLoading}
               variant="secondary"
             >
+              <UserPlus className="mr-2 h-4 w-4" aria-hidden="true" />
               Register
             </Button>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="mt-4 pt-4 border-t border-border">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Reply to Post/Comment
             </label>
             <div className="flex gap-3">
@@ -123,31 +126,32 @@ export function AccountActions({
                 disabled={(isAnyLoading && !replyManualLoading) || !replyUrl.trim()}
                 variant="secondary"
               >
+                <MessageSquareReply className="mr-2 h-4 w-4" aria-hidden="true" />
                 Open Reply
               </Button>
             </div>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               Opens the post in a browser for manual reply
             </p>
           </div>
 
           {lastResult && (
             <div
-              className={`mt-4 p-3 rounded-lg ${
+              className={`mt-4 rounded-lg p-3 ${
                 lastResult.success
-                  ? 'bg-green-50 border border-green-200'
-                  : 'bg-red-50 border border-red-200'
+                  ? 'border border-border bg-accent'
+                  : 'border border-destructive/20 bg-destructive/10'
               }`}
             >
               <p
                 className={`text-sm font-medium ${
-                  lastResult.success ? 'text-green-800' : 'text-red-800'
+                  lastResult.success ? 'text-accent-foreground' : 'text-destructive'
                 }`}
               >
                 {lastResult.success ? 'Action completed successfully' : 'Action failed'}
               </p>
               {lastResult.error && (
-                <p className="mt-1 text-sm text-red-600">
+                <p className="mt-1 text-sm text-destructive">
                   {lastResult.error.code}: {lastResult.error.message}
                 </p>
               )}
@@ -158,32 +162,32 @@ export function AccountActions({
 
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-semibold text-gray-900">Action History</h2>
+          <h2 className="text-lg font-semibold text-foreground">Action History</h2>
         </CardHeader>
         <CardContent>
           {logs.length === 0 ? (
-            <p className="text-gray-500 text-sm">No actions executed yet.</p>
+            <p className="text-muted-foreground text-sm">No actions executed yet.</p>
           ) : (
             <div className="space-y-3">
               {logs.slice(0, 10).map((log) => (
                 <div
                   key={log.id}
-                  className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+                  className="flex items-center justify-between py-2 border-b border-border last:border-0"
                 >
                   <div className="flex items-center gap-3">
                     <Badge variant={log.success ? 'success' : 'error'}>
                       {log.success ? 'Success' : 'Failed'}
                     </Badge>
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-foreground">
                       {log.actionType}
                     </span>
                     {log.errorMessage && (
-                      <span className="text-sm text-red-600">
+                      <span className="text-sm text-destructive">
                         {log.errorMessage}
                       </span>
                     )}
                   </div>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-muted-foreground">
                     {new Date(log.createdAt).toLocaleString()}
                   </span>
                 </div>

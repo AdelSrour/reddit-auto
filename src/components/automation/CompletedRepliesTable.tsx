@@ -31,7 +31,7 @@ export function CompletedRepliesTable({
 
   if (replies.length === 0) {
     return (
-      <div className="text-center py-6 text-gray-500 text-sm">
+      <div className="text-center py-6 text-muted-foreground text-sm">
         No completed replies yet
       </div>
     );
@@ -58,7 +58,7 @@ export function CompletedRepliesTable({
                   href={reply.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-900 hover:text-blue-600 line-clamp-1"
+                  className="text-foreground hover:text-primary line-clamp-1"
                   title={reply.title}
                 >
                   {reply.title}
@@ -83,15 +83,15 @@ export function CompletedRepliesTable({
                     href={reply.replyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm"
+                    className="text-primary hover:underline text-sm"
                   >
                     View Reply
                   </a>
                 ) : (
-                  <span className="text-gray-400">-</span>
+                  <span className="text-muted-foreground/70">-</span>
                 )}
               </TableCell>
-              <TableCell className="text-sm text-gray-500">
+              <TableCell className="text-sm text-muted-foreground">
                 {formatDate(reply.completedAt)}
               </TableCell>
             </TableRow>

@@ -3,6 +3,7 @@
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { Bot, LogIn } from 'lucide-react';
 
 export default function LoginPage(): React.ReactNode {
   const { status } = useSession();
@@ -16,8 +17,8 @@ export default function LoginPage(): React.ReactNode {
 
   if (status === 'loading') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="text-lg text-gray-600">Loading...</div>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-lg text-foreground">Loading...</div>
       </div>
     );
   }
@@ -27,18 +28,22 @@ export default function LoginPage(): React.ReactNode {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md space-y-8 rounded-lg border border-gray-200 bg-white p-8 shadow-lg">
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="w-full max-w-md space-y-8 rounded-lg border border-border bg-card p-8 shadow-lg">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Reddit Auto</h1>
-          <p className="mt-2 text-gray-600">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent text-primary">
+            <Bot className="h-6 w-6" aria-hidden="true" />
+          </div>
+          <h1 className="text-2xl font-bold text-primary">Reddit Auto</h1>
+          <p className="mt-2 text-muted-foreground">
             Sign in with your GitHub account to continue
           </p>
         </div>
         <button
           onClick={() => signIn('github')}
-          className="w-full rounded-lg bg-gray-900 px-4 py-3 font-medium text-white transition-colors hover:bg-gray-800"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-medium text-primary-foreground transition-colors hover:opacity-90"
         >
+          <LogIn className="h-5 w-5" aria-hidden="true" />
           Sign in with GitHub
         </button>
       </div>

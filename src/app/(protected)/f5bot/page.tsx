@@ -1,5 +1,6 @@
 'use client';
 
+import { RefreshCw } from 'lucide-react';
 import { Header } from '@/components/layout';
 import { Button, Pagination } from '@/components/ui';
 import { F5botFilters, F5botTable } from '@/components/f5bot';
@@ -26,19 +27,20 @@ export default function F5botPage() {
         description="View and manage Reddit posts and comments from F5Bot"
         actions={
           <Button onClick={sync} loading={syncing} disabled={loading}>
+            {!syncing && <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />}
             {syncing ? 'Syncing...' : 'Sync Mailbox'}
           </Button>
         }
       />
 
       {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+        <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">
           {error}
         </div>
       )}
 
       {syncResult && (
-        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+        <div className="mb-4 p-4 bg-accent border border-border rounded-lg text-accent-foreground">
           Sync completed: {syncResult.emailsProcessed} emails processed,{' '}
           {syncResult.newMatches} new matches, {syncResult.skippedDuplicates} duplicates skipped
         </div>

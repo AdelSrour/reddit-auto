@@ -86,7 +86,7 @@ export function InstanceForm({
       <Card>
         <CardContent className="p-6 space-y-6">
           {error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">
               {error}
             </div>
           )}
@@ -94,7 +94,7 @@ export function InstanceForm({
           <div>
             <label
               htmlFor="title"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-foreground mb-1"
             >
               Title *
             </label>
@@ -111,7 +111,7 @@ export function InstanceForm({
           <div>
             <label
               htmlFor="description"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-foreground mb-1"
             >
               Description
             </label>
@@ -127,7 +127,7 @@ export function InstanceForm({
           <div>
             <label
               htmlFor="account"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-foreground mb-1"
             >
               Account *
             </label>
@@ -141,7 +141,7 @@ export function InstanceForm({
               disabled={mode === 'edit'}
             />
             {mode === 'edit' && (
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Account cannot be changed after creation
               </p>
             )}
@@ -150,7 +150,7 @@ export function InstanceForm({
           <div>
             <label
               htmlFor="repliesPerDay"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-foreground mb-1"
             >
               Replies per Day
             </label>
@@ -165,7 +165,7 @@ export function InstanceForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               Subreddits *
             </label>
             <SubredditSelector

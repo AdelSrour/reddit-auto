@@ -1,5 +1,6 @@
 'use client';
 
+import { ExternalLink } from 'lucide-react';
 import {
   Table,
   TableHeader,
@@ -42,10 +43,10 @@ function getRatingVariant(rating: number | null): 'success' | 'warning' | 'error
 export function F5botTable({ matches, loading }: F5botTableProps) {
   if (loading) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-8">
+      <div className="bg-card rounded-lg border border-border p-8">
         <div className="flex justify-center items-center">
           <svg
-            className="animate-spin h-8 w-8 text-blue-600"
+            className="animate-spin h-8 w-8 text-primary"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -64,7 +65,7 @@ export function F5botTable({ matches, loading }: F5botTableProps) {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-          <span className="ml-2 text-gray-600">Loading matches...</span>
+          <span className="ml-2 text-muted-foreground">Loading matches...</span>
         </div>
       </div>
     );
@@ -72,8 +73,8 @@ export function F5botTable({ matches, loading }: F5botTableProps) {
 
   if (matches.length === 0) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-8">
-        <div className="text-center text-gray-500">
+      <div className="bg-card rounded-lg border border-border p-8">
+        <div className="text-center text-muted-foreground">
           <p className="text-lg font-medium">No matches found</p>
           <p className="text-sm mt-1">Try adjusting your filters or sync the mailbox for new matches.</p>
         </div>
@@ -82,7 +83,7 @@ export function F5botTable({ matches, loading }: F5botTableProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-card rounded-lg border border-border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
@@ -111,15 +112,15 @@ export function F5botTable({ matches, loading }: F5botTableProps) {
               <TableCell className="max-w-xs">
                 <span title={match.title}>{truncate(match.title, 50)}</span>
               </TableCell>
-              <TableCell className="text-gray-600">u/{match.author}</TableCell>
+              <TableCell className="text-muted-foreground">u/{match.author}</TableCell>
               <TableCell>
                 {match.rating !== null ? (
                   <Badge variant={getRatingVariant(match.rating)}>{match.rating}/5</Badge>
                 ) : (
-                  <span className="text-gray-400">-</span>
+                  <span className="text-muted-foreground/70">-</span>
                 )}
               </TableCell>
-              <TableCell className="text-gray-500 text-xs whitespace-nowrap">
+              <TableCell className="text-muted-foreground text-xs whitespace-nowrap">
                 {formatDate(match.createdAt)}
               </TableCell>
               <TableCell>
@@ -127,8 +128,9 @@ export function F5botTable({ matches, loading }: F5botTableProps) {
                   href={match.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 hover:underline text-sm"
+                  className="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 hover:underline"
                 >
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
                   View
                 </a>
               </TableCell>

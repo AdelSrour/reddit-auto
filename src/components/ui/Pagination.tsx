@@ -1,6 +1,7 @@
 'use client';
 
 import { HTMLAttributes } from 'react';
+import { cn } from '@/lib/utils';
 
 interface PaginationProps extends HTMLAttributes<HTMLDivElement> {
   page: number;
@@ -16,9 +17,9 @@ export function Pagination({
   total,
   limit,
   onPageChange,
-  className = '',
+  className,
   ...props
-}: PaginationProps) {
+}: PaginationProps): React.ReactNode {
   const start = (page - 1) * limit + 1;
   const end = Math.min(page * limit, total);
 
@@ -30,28 +31,26 @@ export function Pagination({
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
-    } else {
-      if (page <= 3) {
-        for (let i = 1; i <= 4; i++) {
-          pages.push(i);
-        }
-        pages.push('...');
-        pages.push(totalPages);
-      } else if (page >= totalPages - 2) {
-        pages.push(1);
-        pages.push('...');
-        for (let i = totalPages - 3; i <= totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        pages.push(1);
-        pages.push('...');
-        pages.push(page - 1);
-        pages.push(page);
-        pages.push(page + 1);
-        pages.push('...');
-        pages.push(totalPages);
+    } else if (page <= 3) {
+      for (let i = 1; i <= 4; i++) {
+        pages.push(i);
       }
+      pages.push('...');
+      pages.push(totalPages);
+    } else if (page >= totalPages - 2) {
+      pages.push(1);
+      pages.push('...');
+      for (let i = totalPages - 3; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      pages.push('...');
+      pages.push(page - 1);
+      pages.push(page);
+      pages.push(page + 1);
+      pages.push('...');
+      pages.push(totalPages);
     }
 
     return pages;
@@ -63,12 +62,15 @@ export function Pagination({
 
   return (
     <div
-      className={`flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6 ${className}`}
+      className={cn(
+        'flex items-center justify-between border-t border-border bg-card px-4 py-3 sm:px-6',
+        className,
+      )}
       {...props}
     >
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-foreground">
             Showing <span className="font-medium">{start}</span> to{' '}
             <span className="font-medium">{end}</span> of{' '}
             <span className="font-medium">{total}</span> results
@@ -79,7 +81,7 @@ export function Pagination({
             <button
               onClick={() => onPageChange(page - 1)}
               disabled={page === 1}
-              className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative inline-flex items-center rounded-l-md px-2 py-2 text-muted-foreground ring-1 ring-inset ring-border hover:bg-muted focus:z-20 focus:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <span className="sr-only">Previous</span>
               <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -94,7 +96,7 @@ export function Pagination({
               pageNum === '...' ? (
                 <span
                   key={`ellipsis-${idx}`}
-                  className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300"
+                  className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-foreground ring-1 ring-inset ring-border"
                 >
                   ...
                 </span>
@@ -102,11 +104,12 @@ export function Pagination({
                 <button
                   key={pageNum}
                   onClick={() => onPageChange(pageNum as number)}
-                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0 ${
+                  className={cn(
+                    'relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0',
                     page === pageNum
-                      ? 'z-10 bg-blue-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
-                      : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50'
-                  }`}
+                      ? 'z-10 bg-primary text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
+                      : 'text-foreground ring-1 ring-inset ring-border hover:bg-muted',
+                  )}
                 >
                   {pageNum}
                 </button>
@@ -115,7 +118,7 @@ export function Pagination({
             <button
               onClick={() => onPageChange(page + 1)}
               disabled={page === totalPages}
-              className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative inline-flex items-center rounded-r-md px-2 py-2 text-muted-foreground ring-1 ring-inset ring-border hover:bg-muted focus:z-20 focus:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <span className="sr-only">Next</span>
               <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -130,22 +133,21 @@ export function Pagination({
         </div>
       </div>
 
-      {/* Mobile pagination */}
       <div className="flex flex-1 justify-between sm:hidden">
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
-          className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="relative inline-flex items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
         >
           Previous
         </button>
-        <span className="text-sm text-gray-700 self-center">
+        <span className="self-center text-sm text-foreground">
           Page {page} of {totalPages}
         </span>
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
-          className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="relative ml-3 inline-flex items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
         >
           Next
         </button>

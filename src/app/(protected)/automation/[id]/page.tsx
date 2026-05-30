@@ -88,7 +88,7 @@ export default function InstanceDetailPage({ params }: PageProps) {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }
@@ -96,10 +96,10 @@ export default function InstanceDetailPage({ params }: PageProps) {
   if (!instance) {
     return (
       <div className="text-center py-12">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
+        <h3 className="text-lg font-medium text-foreground mb-2">
           Instance not found
         </h3>
-        <Link href="/automation" className="text-blue-600 hover:underline">
+        <Link href="/automation" className="text-primary hover:underline">
           Back to Automation
         </Link>
       </div>
@@ -145,11 +145,11 @@ export default function InstanceDetailPage({ params }: PageProps) {
       />
 
       {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+        <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">
           {error}
           <button
             onClick={refresh}
-            className="ml-2 text-red-600 underline hover:no-underline"
+            className="ml-2 text-destructive underline hover:no-underline"
           >
             Retry
           </button>
@@ -159,7 +159,7 @@ export default function InstanceDetailPage({ params }: PageProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-gray-500 mb-1">Status</div>
+            <div className="text-sm text-muted-foreground mb-1">Status</div>
             <Badge variant={statusColors[instance.status]}>
               {statusLabels[instance.status]}
             </Badge>
@@ -168,14 +168,14 @@ export default function InstanceDetailPage({ params }: PageProps) {
 
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-gray-500 mb-1">Account</div>
+            <div className="text-sm text-muted-foreground mb-1">Account</div>
             <div className="font-medium">u/{instance.accountUsername}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-gray-500 mb-1">Replies/Day</div>
+            <div className="text-sm text-muted-foreground mb-1">Replies/Day</div>
             <div className="font-medium">{instance.repliesPerDay}</div>
           </CardContent>
         </Card>
@@ -183,12 +183,12 @@ export default function InstanceDetailPage({ params }: PageProps) {
 
       <Card className="mb-6">
         <CardContent className="p-4">
-          <div className="text-sm text-gray-500 mb-2">Subreddits</div>
+          <div className="text-sm text-muted-foreground mb-2">Subreddits</div>
           <div className="flex flex-wrap gap-2">
             {instance.subreddits.map((sub) => (
               <span
                 key={sub}
-                className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm"
+                className="px-2 py-1 bg-muted text-foreground rounded text-sm"
               >
                 r/{sub}
               </span>
@@ -199,7 +199,7 @@ export default function InstanceDetailPage({ params }: PageProps) {
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-foreground mb-4">
             Available Posts
           </h2>
           <Card>
@@ -218,7 +218,7 @@ export default function InstanceDetailPage({ params }: PageProps) {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-foreground mb-4">
             Scheduled Replies
           </h2>
           <Card>
@@ -234,7 +234,7 @@ export default function InstanceDetailPage({ params }: PageProps) {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-foreground mb-4">
             Completed Replies
           </h2>
           <Card>

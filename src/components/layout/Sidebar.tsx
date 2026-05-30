@@ -2,51 +2,95 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import {
+  Bot,
+  LayoutDashboard,
+  Radio,
+  Users,
+  X,
+  type LucideIcon,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const navigation = [
-  { name: 'Dashboard', href: '/' },
-  { name: 'Accounts', href: '/accounts' },
-  { name: 'F5Bot', href: '/f5bot' },
-  { name: 'Automation', href: '/automation' },
+const navigation: Array<{ name: string; href: string; icon: LucideIcon }> = [
+  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'Accounts', href: '/accounts', icon: Users },
+  { name: 'F5Bot', href: '/f5bot', icon: Radio },
+  { name: 'Automation', href: '/automation', icon: Bot },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function Sidebar({ isOpen, onClose }: SidebarProps): React.ReactNode {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-gray-900 text-white min-h-screen">
-      <div className="p-6">
-        <h1 className="text-xl font-bold">Reddit Auto</h1>
-      </div>
-      <nav className="mt-6">
-        <ul className="space-y-1 px-3">
-          {navigation.map((item) => {
-            const isActive =
-              item.href === '/'
-                ? pathname === '/'
-                : pathname.startsWith(item.href);
+    <>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
 
-            return (
-              <li key={item.name}>
-                <Link
-                  href={item.href}
-                  className={`
-                    flex items-center px-3 py-2 rounded-lg text-sm font-medium
-                    transition-colors
-                    ${
+      <aside
+        className={cn(
+          'fixed left-0 top-0 z-50 h-screen w-64 border-r border-border bg-sidebar text-sidebar-foreground transition-transform duration-300 ease-in-out',
+          isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
+        )}
+      >
+        <div className="flex items-center justify-between p-6">
+          <div className="flex items-center gap-2">
+            <Bot className="h-6 w-6 text-primary" aria-hidden="true" />
+            <h1 className="text-xl font-bold text-primary">Reddit Auto</h1>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-lg p-1 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground md:hidden"
+            aria-label="Close menu"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <nav className="px-3">
+          <ul className="space-y-1">
+            {navigation.map((item) => {
+              const isActive =
+                item.href === '/'
+                  ? pathname === '/'
+                  : pathname.startsWith(item.href);
+              const Icon = item.icon;
+
+              return (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    onClick={() => {
+                      if (window.innerWidth < 768) {
+                        onClose();
+                      }
+                    }}
+                    className={cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                       isActive
-                        ? 'bg-gray-800 text-white'
-                        : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                    }
-                  `}
-                >
-                  {item.name}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-    </aside>
+                        ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                        : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                    )}
+                  >
+                    <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+                    {item.name}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </aside>
+    </>
   );
 }

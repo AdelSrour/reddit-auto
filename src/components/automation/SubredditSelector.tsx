@@ -60,7 +60,7 @@ export function SubredditSelector({
           type="button"
           onClick={handleSelectAll}
           disabled={disabled}
-          className="px-3 py-2 text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50"
+          className="px-3 py-2 text-sm text-primary hover:text-primary/80 disabled:opacity-50"
         >
           Select All
         </button>
@@ -68,7 +68,7 @@ export function SubredditSelector({
           type="button"
           onClick={handleClearAll}
           disabled={disabled}
-          className="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50"
+          className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50"
         >
           Clear
         </button>
@@ -79,14 +79,14 @@ export function SubredditSelector({
           {selectedSubreddits.map((subreddit) => (
             <span
               key={subreddit}
-              className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+              className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-1 text-sm text-primary"
             >
               r/{subreddit}
               {!disabled && (
                 <button
                   type="button"
                   onClick={() => handleToggle(subreddit)}
-                  className="text-blue-600 hover:text-blue-800"
+                  className="text-primary hover:text-primary/80"
                 >
                   ×
                 </button>
@@ -96,19 +96,19 @@ export function SubredditSelector({
         </div>
       )}
 
-      <div className="border border-gray-200 rounded-lg max-h-48 overflow-y-auto">
+      <div className="border border-border rounded-lg max-h-48 overflow-y-auto">
         {filteredSubreddits.length === 0 ? (
-          <div className="p-4 text-center text-gray-500 text-sm">
+          <div className="p-4 text-center text-muted-foreground text-sm">
             No subreddits found
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-border">
             {filteredSubreddits.map((subreddit) => {
               const isSelected = selectedSubreddits.includes(subreddit);
               return (
                 <label
                   key={subreddit}
-                  className={`flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-gray-50 ${
+                  className={`flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-muted ${
                     disabled ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >
@@ -117,9 +117,9 @@ export function SubredditSelector({
                     checked={isSelected}
                     onChange={() => handleToggle(subreddit)}
                     disabled={disabled}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-border text-primary focus:ring-ring"
                   />
-                  <span className="text-sm text-gray-900">r/{subreddit}</span>
+                  <span className="text-sm text-foreground">r/{subreddit}</span>
                 </label>
               );
             })}
@@ -127,7 +127,7 @@ export function SubredditSelector({
         )}
       </div>
 
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-muted-foreground">
         {selectedSubreddits.length} subreddit{selectedSubreddits.length !== 1 ? 's' : ''} selected
       </p>
     </div>

@@ -55,14 +55,14 @@ export function AvailablePostsTable({
   if (loading && posts.length === 0) {
     return (
       <div className="flex justify-center items-center h-32">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }
 
   if (posts.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-muted-foreground">
         No available posts to reply to
       </div>
     );
@@ -89,7 +89,7 @@ export function AvailablePostsTable({
                   href={`https://reddit.com/r/${post.subreddit}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
+                  className="text-primary hover:underline"
                 >
                   r/{post.subreddit}
                 </a>
@@ -99,7 +99,7 @@ export function AvailablePostsTable({
                   href={post.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-900 hover:text-blue-600 line-clamp-1"
+                  className="text-foreground hover:text-primary line-clamp-1"
                   title={post.title}
                 >
                   {post.title}
@@ -115,7 +115,7 @@ export function AvailablePostsTable({
                   href={`https://reddit.com/u/${post.author}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-blue-600"
+                  className="text-muted-foreground hover:text-primary"
                 >
                   u/{post.author}
                 </a>
@@ -128,13 +128,13 @@ export function AvailablePostsTable({
                         ? 'text-green-600'
                         : post.rating >= 4
                           ? 'text-yellow-600'
-                          : 'text-red-600'
+                          : 'text-destructive'
                     }`}
                   >
                     {post.rating}/10
                   </span>
                 ) : (
-                  <span className="text-gray-400">-</span>
+                  <span className="text-muted-foreground/70">-</span>
                 )}
               </TableCell>
               <TableCell className="text-right">

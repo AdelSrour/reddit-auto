@@ -39,7 +39,7 @@ export function F5botFilters({ params, onParamsChange }: F5botFiltersProps) {
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg border border-gray-200 mb-4">
+    <div className="bg-card p-4 rounded-lg border border-border mb-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <Input
           label="Keyword"

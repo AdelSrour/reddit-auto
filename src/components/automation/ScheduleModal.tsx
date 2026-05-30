@@ -29,18 +29,18 @@ export function ScheduleModal({ post, onClose, onSchedule }: ScheduleModalProps)
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-card rounded-lg shadow-xl max-w-md w-full mx-4">
         <div className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-foreground mb-2">
             Schedule Reply
           </h3>
-          <p className="text-sm text-gray-500 mb-4 line-clamp-2">
+          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
             {post.title}
           </p>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+            <div className="mb-4 rounded border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </div>
           )}
@@ -49,7 +49,7 @@ export function ScheduleModal({ post, onClose, onSchedule }: ScheduleModalProps)
             <div className="mb-4">
               <label
                 htmlFor="delay"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-foreground mb-1"
               >
                 Reply in (minutes)
               </label>
@@ -62,7 +62,7 @@ export function ScheduleModal({ post, onClose, onSchedule }: ScheduleModalProps)
                 onChange={(e) => setDelayMinutes(Number(e.target.value))}
                 required
               />
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {delayMinutes >= 60
                   ? `${Math.floor(delayMinutes / 60)}h ${delayMinutes % 60}m from now`
                   : `${delayMinutes} minutes from now`}

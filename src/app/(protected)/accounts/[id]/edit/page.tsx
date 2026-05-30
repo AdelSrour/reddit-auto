@@ -24,7 +24,7 @@ export default function EditAccountPage({ params }: PageProps) {
       <div>
         <Header title="Edit Account" />
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
         </div>
       </div>
     );
@@ -34,7 +34,7 @@ export default function EditAccountPage({ params }: PageProps) {
     return (
       <div>
         <Header title="Edit Account" />
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">
           {error ?? 'Account not found'}
         </div>
       </div>

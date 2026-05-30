@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Plus } from 'lucide-react';
 import { Header } from '@/components/layout';
 import { Button } from '@/components/ui';
 import { AccountList } from '@/components/accounts';
@@ -24,7 +25,7 @@ export default function AccountsPage() {
       <div>
         <Header title="Accounts" description="Manage your Reddit accounts" />
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
         </div>
       </div>
     );
@@ -34,7 +35,7 @@ export default function AccountsPage() {
     return (
       <div>
         <Header title="Accounts" description="Manage your Reddit accounts" />
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">
           {error}
         </div>
       </div>
@@ -48,7 +49,10 @@ export default function AccountsPage() {
         description="Manage your Reddit accounts"
         actions={
           <Link href="/accounts/new">
-            <Button>Add Account</Button>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
+              Add Account
+            </Button>
           </Link>
         }
       />

@@ -28,7 +28,7 @@ export default function AccountDetailPage({ params }: PageProps) {
       <div>
         <Header title="Account Details" />
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
         </div>
       </div>
     );
@@ -38,7 +38,7 @@ export default function AccountDetailPage({ params }: PageProps) {
     return (
       <div>
         <Header title="Account Details" />
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">
           {error ?? 'Account not found'}
         </div>
       </div>
@@ -66,19 +66,19 @@ export default function AccountDetailPage({ params }: PageProps) {
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-foreground">
                 Account Info
               </h2>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <dt className="text-sm text-gray-500">Username</dt>
-                <dd className="text-sm font-medium text-gray-900">
+                <dt className="text-sm text-muted-foreground">Username</dt>
+                <dd className="text-sm font-medium text-foreground">
                   {account.username}
                 </dd>
               </div>
               <div>
-                <dt className="text-sm text-gray-500">Status</dt>
+                <dt className="text-sm text-muted-foreground">Status</dt>
                 <dd>
                   <Badge variant={account.isActive ? 'success' : 'error'}>
                     {account.isActive ? 'Active' : 'Inactive'}
@@ -86,32 +86,32 @@ export default function AccountDetailPage({ params }: PageProps) {
                 </dd>
               </div>
               <div>
-                <dt className="text-sm text-gray-500">Proxy</dt>
-                <dd className="text-sm font-medium text-gray-900">
+                <dt className="text-sm text-muted-foreground">Proxy</dt>
+                <dd className="text-sm font-medium text-foreground">
                   {account.proxyHost
                     ? `${account.proxyHost}:${account.proxyPort}`
                     : 'None'}
                 </dd>
               </div>
               <div>
-                <dt className="text-sm text-gray-500">Last Login</dt>
-                <dd className="text-sm font-medium text-gray-900">
+                <dt className="text-sm text-muted-foreground">Last Login</dt>
+                <dd className="text-sm font-medium text-foreground">
                   {account.lastLoginAt
                     ? new Date(account.lastLoginAt).toLocaleString()
                     : 'Never'}
                 </dd>
               </div>
               <div>
-                <dt className="text-sm text-gray-500">Last Action</dt>
-                <dd className="text-sm font-medium text-gray-900">
+                <dt className="text-sm text-muted-foreground">Last Action</dt>
+                <dd className="text-sm font-medium text-foreground">
                   {account.lastActionAt
                     ? new Date(account.lastActionAt).toLocaleString()
                     : 'Never'}
                 </dd>
               </div>
               <div>
-                <dt className="text-sm text-gray-500">Created</dt>
-                <dd className="text-sm font-medium text-gray-900">
+                <dt className="text-sm text-muted-foreground">Created</dt>
+                <dd className="text-sm font-medium text-foreground">
                   {new Date(account.createdAt).toLocaleString()}
                 </dd>
               </div>

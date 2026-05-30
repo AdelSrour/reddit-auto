@@ -58,20 +58,20 @@ export function AccountForm({
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-foreground">
           {isEdit ? 'Edit Account' : 'Add New Account'}
         </h2>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
               {error}
             </div>
           )}
 
           <div className="space-y-4">
-            <h3 className="text-sm font-medium text-gray-900">
+            <h3 className="text-sm font-medium text-foreground">
               Reddit Credentials
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -98,7 +98,7 @@ export function AccountForm({
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-sm font-medium text-gray-900">
+            <h3 className="text-sm font-medium text-foreground">
               Proxy Configuration (Optional)
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

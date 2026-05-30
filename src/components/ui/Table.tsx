@@ -1,12 +1,13 @@
 import type { HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from 'react';
+import { cn } from '@/lib/utils';
 
 type TableProps = HTMLAttributes<HTMLTableElement>;
 
-export function Table({ className = '', children, ...props }: TableProps) {
+export function Table({ className, children, ...props }: TableProps): React.ReactNode {
   return (
     <div className="overflow-x-auto">
       <table
-        className={`min-w-full divide-y divide-gray-200 ${className}`}
+        className={cn('min-w-full divide-y divide-border', className)}
         {...props}
       >
         {children}
@@ -17,9 +18,9 @@ export function Table({ className = '', children, ...props }: TableProps) {
 
 type TableHeaderProps = HTMLAttributes<HTMLTableSectionElement>;
 
-export function TableHeader({ className = '', children, ...props }: TableHeaderProps) {
+export function TableHeader({ className, children, ...props }: TableHeaderProps): React.ReactNode {
   return (
-    <thead className={`bg-gray-50 ${className}`} {...props}>
+    <thead className={cn('bg-muted', className)} {...props}>
       {children}
     </thead>
   );
@@ -27,9 +28,9 @@ export function TableHeader({ className = '', children, ...props }: TableHeaderP
 
 type TableBodyProps = HTMLAttributes<HTMLTableSectionElement>;
 
-export function TableBody({ className = '', children, ...props }: TableBodyProps) {
+export function TableBody({ className, children, ...props }: TableBodyProps): React.ReactNode {
   return (
-    <tbody className={`bg-white divide-y divide-gray-200 ${className}`} {...props}>
+    <tbody className={cn('divide-y divide-border bg-card', className)} {...props}>
       {children}
     </tbody>
   );
@@ -37,9 +38,9 @@ export function TableBody({ className = '', children, ...props }: TableBodyProps
 
 type TableRowProps = HTMLAttributes<HTMLTableRowElement>;
 
-export function TableRow({ className = '', children, ...props }: TableRowProps) {
+export function TableRow({ className, children, ...props }: TableRowProps): React.ReactNode {
   return (
-    <tr className={`hover:bg-gray-50 ${className}`} {...props}>
+    <tr className={cn('hover:bg-muted/50', className)} {...props}>
       {children}
     </tr>
   );
@@ -47,10 +48,13 @@ export function TableRow({ className = '', children, ...props }: TableRowProps) 
 
 type TableHeadProps = ThHTMLAttributes<HTMLTableCellElement>;
 
-export function TableHead({ className = '', children, ...props }: TableHeadProps) {
+export function TableHead({ className, children, ...props }: TableHeadProps): React.ReactNode {
   return (
     <th
-      className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${className}`}
+      className={cn(
+        'px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground',
+        className,
+      )}
       {...props}
     >
       {children}
@@ -60,9 +64,9 @@ export function TableHead({ className = '', children, ...props }: TableHeadProps
 
 type TableCellProps = TdHTMLAttributes<HTMLTableCellElement>;
 
-export function TableCell({ className = '', children, ...props }: TableCellProps) {
+export function TableCell({ className, children, ...props }: TableCellProps): React.ReactNode {
   return (
-    <td className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${className}`} {...props}>
+    <td className={cn('whitespace-nowrap px-6 py-4 text-sm text-foreground', className)} {...props}>
       {children}
     </td>
   );

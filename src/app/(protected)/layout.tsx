@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
-import { Sidebar } from '@/components/layout';
+import { DashboardLayout } from '@/components/layout';
 
 export default async function ProtectedLayout({
   children,
@@ -14,10 +14,5 @@ export default async function ProtectedLayout({
     redirect('/login');
   }
 
-  return (
-    <div className="min-h-full flex">
-      <Sidebar />
-      <main className="flex-1 bg-gray-50 p-8">{children}</main>
-    </div>
-  );
+  return <DashboardLayout>{children}</DashboardLayout>;
 }

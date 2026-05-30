@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { api, ApiError } from '@/lib/api';
 import type {
   F5botMatch,
@@ -31,27 +31,39 @@ export function useF5botMatches(initialParams?: F5botQueryParams): UseF5botMatch
   const [error, setError] = useState<string | null>(null);
   const [syncResult, setSyncResult] = useState<F5botSyncResult | null>(null);
   const [params, setParams] = useState<F5botQueryParams>(initialParams ?? { page: 1, limit: 20 });
+  const mountedRef = useRef(true);
 
   const fetchMatches = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await api.f5bot.list(params);
-      setMatches(response.data);
-      setMeta(response.meta);
+      if (mountedRef.current) {
+        setMatches(response.data);
+        setMeta(response.meta);
+      }
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError('Failed to fetch matches');
+      if (mountedRef.current) {
+        if (err instanceof ApiError) {
+          setError(err.message);
+        } else {
+          setError('Failed to fetch matches');
+        }
       }
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
   }, [params]);
 
   useEffect(() => {
-    fetchMatches();
+    mountedRef.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial data fetch with cleanup guard
+    void fetchMatches();
+    return () => {
+      mountedRef.current = false;
+    };
   }, [fetchMatches]);
 
   const setPage = useCallback((page: number) => {

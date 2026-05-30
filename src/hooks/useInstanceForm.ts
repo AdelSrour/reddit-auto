@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { api, ApiError } from '@/lib/api';
 import type { AvailableAccount } from '@/lib/types';
 
@@ -16,6 +16,7 @@ export function useInstanceForm(): UseInstanceFormReturn {
   const [availableSubreddits, setAvailableSubreddits] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const mountedRef = useRef(true);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -25,21 +26,32 @@ export function useInstanceForm(): UseInstanceFormReturn {
         api.automation.availableAccounts(),
         api.automation.subreddits(),
       ]);
-      setAvailableAccounts(accounts);
-      setAvailableSubreddits(subreddits);
+      if (mountedRef.current) {
+        setAvailableAccounts(accounts);
+        setAvailableSubreddits(subreddits);
+      }
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError('Failed to load form data');
+      if (mountedRef.current) {
+        if (err instanceof ApiError) {
+          setError(err.message);
+        } else {
+          setError('Failed to load form data');
+        }
       }
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    fetchData();
+    mountedRef.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial data fetch with cleanup guard
+    void fetchData();
+    return () => {
+      mountedRef.current = false;
+    };
   }, [fetchData]);
 
   return {

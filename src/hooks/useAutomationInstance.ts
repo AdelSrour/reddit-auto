@@ -127,6 +127,7 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
 
   useEffect(() => {
     mountedRef.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial data fetch with cleanup guard
     void fetchInstance();
     return () => {
       mountedRef.current = false;
@@ -135,6 +136,7 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
 
   useEffect(() => {
     if (instance) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Dependent data fetch after instance loads
       void fetchPosts();
       void fetchCompleted();
       void fetchScheduled();

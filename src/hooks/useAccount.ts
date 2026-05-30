@@ -59,6 +59,7 @@ export function useAccount(id: string): UseAccountReturn {
 
   useEffect(() => {
     mountedRef.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial data fetch with cleanup guard
     void fetchAccount();
     return () => {
       mountedRef.current = false;

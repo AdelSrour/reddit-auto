@@ -43,6 +43,7 @@ export function useAutomationInstances(): UseAutomationInstancesReturn {
 
   useEffect(() => {
     mountedRef.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial data fetch with cleanup guard
     void fetchInstances();
     return () => {
       mountedRef.current = false;

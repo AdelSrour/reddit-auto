@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { api, ApiError } from '@/lib/api';
 import type {
   AutomationInstance,
@@ -53,21 +53,28 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
   const [postsPage, setPostsPage] = useState(1);
   const [completedPage, setCompletedPage] = useState(1);
   const [scheduledPage, setScheduledPage] = useState(1);
+  const mountedRef = useRef(true);
 
   const fetchInstance = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const data = await api.automation.instances.get(id);
-      setInstance(data);
+      if (mountedRef.current) {
+        setInstance(data);
+      }
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError('Failed to fetch instance');
+      if (mountedRef.current) {
+        if (err instanceof ApiError) {
+          setError(err.message);
+        } else {
+          setError('Failed to fetch instance');
+        }
       }
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
   }, [id]);
 
@@ -75,24 +82,30 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
     setPostsLoading(true);
     try {
       const response = await api.automation.instances.getPosts(id, postsPage, 20);
-      setPosts(response.data);
-      setPostsMeta(response.meta);
+      if (mountedRef.current) {
+        setPosts(response.data);
+        setPostsMeta(response.meta);
+      }
     } catch (err) {
-      if (err instanceof ApiError) {
+      if (mountedRef.current && err instanceof ApiError) {
         setError(err.message);
       }
     } finally {
-      setPostsLoading(false);
+      if (mountedRef.current) {
+        setPostsLoading(false);
+      }
     }
   }, [id, postsPage]);
 
   const fetchCompleted = useCallback(async () => {
     try {
       const response = await api.automation.instances.getCompleted(id, completedPage, 10);
-      setCompletedReplies(response.data);
-      setCompletedMeta(response.meta);
+      if (mountedRef.current) {
+        setCompletedReplies(response.data);
+        setCompletedMeta(response.meta);
+      }
     } catch (err) {
-      if (err instanceof ApiError) {
+      if (mountedRef.current && err instanceof ApiError) {
         setError(err.message);
       }
     }
@@ -101,24 +114,30 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
   const fetchScheduled = useCallback(async () => {
     try {
       const response = await api.automation.instances.getScheduled(id, scheduledPage, 10);
-      setScheduledReplies(response.data);
-      setScheduledMeta(response.meta);
+      if (mountedRef.current) {
+        setScheduledReplies(response.data);
+        setScheduledMeta(response.meta);
+      }
     } catch (err) {
-      if (err instanceof ApiError) {
+      if (mountedRef.current && err instanceof ApiError) {
         setError(err.message);
       }
     }
   }, [id, scheduledPage]);
 
   useEffect(() => {
-    fetchInstance();
+    mountedRef.current = true;
+    void fetchInstance();
+    return () => {
+      mountedRef.current = false;
+    };
   }, [fetchInstance]);
 
   useEffect(() => {
     if (instance) {
-      fetchPosts();
-      fetchCompleted();
-      fetchScheduled();
+      void fetchPosts();
+      void fetchCompleted();
+      void fetchScheduled();
     }
   }, [instance, fetchPosts, fetchCompleted, fetchScheduled]);
 

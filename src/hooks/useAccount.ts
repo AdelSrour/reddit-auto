@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { api, ApiError } from '@/lib/api';
 import type {
   Account,
@@ -28,6 +28,7 @@ export function useAccount(id: string): UseAccountReturn {
   const [logs, setLogs] = useState<ActionLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const mountedRef = useRef(true);
 
   const fetchAccount = useCallback(async () => {
     try {
@@ -37,21 +38,31 @@ export function useAccount(id: string): UseAccountReturn {
         api.accounts.get(id),
         api.accounts.getLogs(id),
       ]);
-      setAccount(accountData);
-      setLogs(logsData);
+      if (mountedRef.current) {
+        setAccount(accountData);
+        setLogs(logsData);
+      }
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(`Failed to load account: ${err.message}`);
-      } else {
-        setError('Failed to load account');
+      if (mountedRef.current) {
+        if (err instanceof ApiError) {
+          setError(`Failed to load account: ${err.message}`);
+        } else {
+          setError('Failed to load account');
+        }
       }
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
   }, [id]);
 
   useEffect(() => {
+    mountedRef.current = true;
     void fetchAccount();
+    return () => {
+      mountedRef.current = false;
+    };
   }, [fetchAccount]);
 
   const executeLogin = useCallback(async (): Promise<ActionResult> => {

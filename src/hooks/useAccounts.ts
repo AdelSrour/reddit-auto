@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { api, ApiError } from '@/lib/api';
 import type { Account, CreateAccountInput, UpdateAccountInput } from '@/lib/types';
 
@@ -18,26 +18,37 @@ export function useAccounts(): UseAccountsReturn {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const mountedRef = useRef(true);
 
   const fetchAccounts = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const data = await api.accounts.list();
-      setAccounts(data);
+      if (mountedRef.current) {
+        setAccounts(data);
+      }
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(`Failed to load accounts: ${err.message}`);
-      } else {
-        setError('Failed to load accounts');
+      if (mountedRef.current) {
+        if (err instanceof ApiError) {
+          setError(`Failed to load accounts: ${err.message}`);
+        } else {
+          setError('Failed to load accounts');
+        }
       }
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
+    mountedRef.current = true;
     void fetchAccounts();
+    return () => {
+      mountedRef.current = false;
+    };
   }, [fetchAccounts]);
 
   const createAccount = useCallback(

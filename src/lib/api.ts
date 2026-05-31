@@ -10,6 +10,7 @@ import type {
   F5botMatch,
   F5botQueryParams,
   F5botSyncResult,
+  F5botRateResult,
   PaginatedResponse,
   AutomationInstance,
   CreateInstanceInput,
@@ -137,6 +138,11 @@ export const api = {
 
     sync: (): Promise<F5botSyncResult> =>
       fetchApi('/f5bot/sync', {
+        method: 'POST',
+      }),
+
+    rate: (): Promise<F5botRateResult> =>
+      fetchApi('/f5bot/rate', {
         method: 'POST',
       }),
   },

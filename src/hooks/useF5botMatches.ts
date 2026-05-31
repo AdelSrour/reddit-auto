@@ -6,6 +6,7 @@ import type {
   F5botMatch,
   F5botQueryParams,
   F5botSyncResult,
+  F5botRateResult,
   PaginationMeta,
 } from '@/lib/types';
 
@@ -14,12 +15,15 @@ interface UseF5botMatchesReturn {
   meta: PaginationMeta | null;
   loading: boolean;
   syncing: boolean;
+  rating: boolean;
   error: string | null;
   syncResult: F5botSyncResult | null;
+  rateResult: F5botRateResult | null;
   params: F5botQueryParams;
   setParams: (params: F5botQueryParams) => void;
   setPage: (page: number) => void;
   sync: () => Promise<void>;
+  rate: () => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -28,8 +32,10 @@ export function useF5botMatches(initialParams?: F5botQueryParams): UseF5botMatch
   const [meta, setMeta] = useState<PaginationMeta | null>(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [rating, setRating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [syncResult, setSyncResult] = useState<F5botSyncResult | null>(null);
+  const [rateResult, setRateResult] = useState<F5botRateResult | null>(null);
   const [params, setParams] = useState<F5botQueryParams>(initialParams ?? { page: 1, limit: 20 });
   const mountedRef = useRef(true);
 
@@ -73,6 +79,7 @@ export function useF5botMatches(initialParams?: F5botQueryParams): UseF5botMatch
   const sync = useCallback(async () => {
     setSyncing(true);
     setSyncResult(null);
+    setRateResult(null);
     setError(null);
     try {
       const result = await api.f5bot.sync();
@@ -89,6 +96,26 @@ export function useF5botMatches(initialParams?: F5botQueryParams): UseF5botMatch
     }
   }, [fetchMatches]);
 
+  const rate = useCallback(async () => {
+    setRating(true);
+    setRateResult(null);
+    setSyncResult(null);
+    setError(null);
+    try {
+      const result = await api.f5bot.rate();
+      setRateResult(result);
+      await fetchMatches();
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError('Failed to rate matches');
+      }
+    } finally {
+      setRating(false);
+    }
+  }, [fetchMatches]);
+
   const refresh = useCallback(async () => {
     await fetchMatches();
   }, [fetchMatches]);
@@ -98,12 +125,15 @@ export function useF5botMatches(initialParams?: F5botQueryParams): UseF5botMatch
     meta,
     loading,
     syncing,
+    rating,
     error,
     syncResult,
+    rateResult,
     params,
     setParams,
     setPage,
     sync,
+    rate,
     refresh,
   };
 }

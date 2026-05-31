@@ -113,6 +113,12 @@ export interface F5botSyncResult {
   skippedDuplicates: number;
 }
 
+export interface F5botRateResult {
+  totalUnrated: number;
+  rated: number;
+  failed: number;
+}
+
 // Automation types
 export type AutomationStatus = 'ACTIVE' | 'PAUSED' | 'OFF';
 

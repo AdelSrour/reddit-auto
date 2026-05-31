@@ -1,6 +1,6 @@
 'use client';
 
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Star } from 'lucide-react';
 import { Header } from '@/components/layout';
 import { Button, Pagination } from '@/components/ui';
 import { F5botFilters, F5botTable } from '@/components/f5bot';
@@ -12,12 +12,15 @@ export default function F5botPage() {
     meta,
     loading,
     syncing,
+    rating,
     error,
     syncResult,
+    rateResult,
     params,
     setParams,
     setPage,
     sync,
+    rate,
   } = useF5botMatches();
 
   return (
@@ -26,10 +29,16 @@ export default function F5botPage() {
         title="F5Bot Matches"
         description="View and manage Reddit posts and comments from F5Bot"
         actions={
-          <Button onClick={sync} loading={syncing} disabled={loading}>
-            {!syncing && <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />}
-            {syncing ? 'Syncing...' : 'Sync Mailbox'}
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={sync} loading={syncing} disabled={loading || rating}>
+              {!syncing && <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />}
+              {syncing ? 'Syncing...' : 'Sync Mailbox'}
+            </Button>
+            <Button onClick={rate} loading={rating} disabled={loading || syncing} variant="secondary">
+              {!rating && <Star className="mr-2 h-4 w-4" aria-hidden="true" />}
+              {rating ? 'Rating...' : 'Rate Unrated'}
+            </Button>
+          </div>
         }
       />
 
@@ -43,6 +52,13 @@ export default function F5botPage() {
         <div className="mb-4 p-4 bg-accent border border-border rounded-lg text-accent-foreground">
           Sync completed: {syncResult.emailsProcessed} emails processed,{' '}
           {syncResult.newMatches} new matches, {syncResult.skippedDuplicates} duplicates skipped
+        </div>
+      )}
+
+      {rateResult && (
+        <div className="mb-4 p-4 bg-accent border border-border rounded-lg text-accent-foreground">
+          Rating completed: {rateResult.rated} rated out of {rateResult.totalUnrated} unrated
+          {rateResult.failed > 0 && `, ${rateResult.failed} failed`}
         </div>
       )}
 

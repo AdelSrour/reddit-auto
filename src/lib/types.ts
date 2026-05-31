@@ -53,17 +53,7 @@ export interface UpdateAccountInput {
 }
 
 export interface ExecuteReplyInput {
-  targetUrl: string;
-  replyText: string;
-}
-
-export interface ExecuteReplyManualInput {
-  url: string;
-}
-
-export interface ReplyManualOutput {
-  sourceUrl: string;
-  landedUrl: string;
+  matchId: string;
 }
 
 // F5Bot types

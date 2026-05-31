@@ -1,41 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { LogIn, MessageSquareReply, UserPlus } from 'lucide-react';
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardContent,
-  Badge,
-  Input,
-} from '@/components/ui';
-import type {
-  ActionResult,
-  ActionLog,
-  ExecuteReplyManualInput,
-  ReplyManualOutput,
-} from '@/lib/types';
+import { LogIn, UserPlus } from 'lucide-react';
+import { Button, Card, CardHeader, CardContent, Badge } from '@/components/ui';
+import type { ActionResult, ActionLog } from '@/lib/types';
 
 interface AccountActionsProps {
   onLogin: () => Promise<ActionResult>;
   onRegister: () => Promise<ActionResult>;
-  onReplyManual: (
-    input: ExecuteReplyManualInput,
-  ) => Promise<ActionResult<ReplyManualOutput>>;
   logs: ActionLog[];
 }
 
 export function AccountActions({
   onLogin,
   onRegister,
-  onReplyManual,
   logs,
 }: AccountActionsProps) {
   const [loginLoading, setLoginLoading] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
-  const [replyManualLoading, setReplyManualLoading] = useState(false);
-  const [replyUrl, setReplyUrl] = useState('');
   const [lastResult, setLastResult] = useState<ActionResult<unknown> | null>(
     null,
   );
@@ -62,23 +44,7 @@ export function AccountActions({
     }
   };
 
-  const handleReplyManual = async () => {
-    if (!replyUrl.trim()) return;
-
-    setReplyManualLoading(true);
-    setLastResult(null);
-    try {
-      const result = await onReplyManual({ url: replyUrl.trim() });
-      setLastResult(result);
-      if (result.success) {
-        setReplyUrl('');
-      }
-    } finally {
-      setReplyManualLoading(false);
-    }
-  };
-
-  const isAnyLoading = loginLoading || registerLoading || replyManualLoading;
+  const isAnyLoading = loginLoading || registerLoading;
 
   return (
     <div className="space-y-6">
@@ -105,34 +71,6 @@ export function AccountActions({
               <UserPlus className="mr-2 h-4 w-4" aria-hidden="true" />
               Register
             </Button>
-          </div>
-
-          <div className="mt-4 pt-4 border-t border-border">
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Reply to Post/Comment
-            </label>
-            <div className="flex gap-3">
-              <Input
-                type="url"
-                placeholder="https://www.reddit.com/r/subreddit/comments/..."
-                value={replyUrl}
-                onChange={(e) => setReplyUrl(e.target.value)}
-                disabled={isAnyLoading}
-                className="flex-1"
-              />
-              <Button
-                onClick={handleReplyManual}
-                loading={replyManualLoading}
-                disabled={(isAnyLoading && !replyManualLoading) || !replyUrl.trim()}
-                variant="secondary"
-              >
-                <MessageSquareReply className="mr-2 h-4 w-4" aria-hidden="true" />
-                Open Reply
-              </Button>
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Opens the post in a browser for manual reply
-            </p>
           </div>
 
           {lastResult && (

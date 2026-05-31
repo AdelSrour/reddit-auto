@@ -5,8 +5,6 @@ import type {
   CreateAccountInput,
   UpdateAccountInput,
   ExecuteReplyInput,
-  ExecuteReplyManualInput,
-  ReplyManualOutput,
   F5botMatch,
   F5botQueryParams,
   F5botSyncResult,
@@ -103,17 +101,8 @@ export const api = {
     reply: (
       accountId: string,
       input: ExecuteReplyInput,
-    ): Promise<ActionResult> =>
+    ): Promise<ActionResult<ReplyOutput>> =>
       fetchApi(`/accounts/${accountId}/actions/reply`, {
-        method: 'POST',
-        body: JSON.stringify(input),
-      }),
-
-    replyManual: (
-      accountId: string,
-      input: ExecuteReplyManualInput,
-    ): Promise<ActionResult<ReplyManualOutput>> =>
-      fetchApi(`/accounts/${accountId}/actions/reply-manual`, {
         method: 'POST',
         body: JSON.stringify(input),
       }),

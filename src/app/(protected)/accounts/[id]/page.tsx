@@ -13,15 +13,8 @@ interface PageProps {
 
 export default function AccountDetailPage({ params }: PageProps) {
   const { id } = use(params);
-  const {
-    account,
-    logs,
-    loading,
-    error,
-    executeLogin,
-    executeRegister,
-    executeReplyManual,
-  } = useAccount(id);
+  const { account, logs, loading, error, executeLogin, executeRegister } =
+    useAccount(id);
 
   if (loading) {
     return (
@@ -123,7 +116,6 @@ export default function AccountDetailPage({ params }: PageProps) {
           <AccountActions
             onLogin={executeLogin}
             onRegister={executeRegister}
-            onReplyManual={executeReplyManual}
             logs={logs}
           />
         </div>

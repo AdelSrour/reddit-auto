@@ -200,3 +200,19 @@ export interface AvailableAccount {
   id: string;
   username: string;
 }
+
+export interface ReplyStats {
+  totalReplies: number;
+  successfulReplies: number;
+  failedReplies: number;
+  successRate: number;
+  repliesToday: number;
+  repliesThisWeek: number;
+  topSubreddits: Array<{ subreddit: string; count: number }>;
+}
+
+export interface AllRepliesResponse {
+  data: AutomationReply[];
+  meta: PaginationMeta;
+  stats: ReplyStats;
+}

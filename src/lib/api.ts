@@ -20,6 +20,7 @@ import type {
   ExecuteAutoReplyInput,
   ReplyOutput,
   AvailableAccount,
+  AllRepliesResponse,
 } from './types';
 
 const API_BASE_URL = '/api/proxy';
@@ -137,6 +138,14 @@ export const api = {
   },
 
   automation: {
+    getAllReplies: (page?: number, limit?: number): Promise<AllRepliesResponse> => {
+      const searchParams = new URLSearchParams();
+      if (page !== undefined) searchParams.set('page', String(page));
+      if (limit !== undefined) searchParams.set('limit', String(limit));
+      const query = searchParams.toString();
+      return fetchApi(`/automation/replies${query ? `?${query}` : ''}`);
+    },
+
     instances: {
       list: (): Promise<AutomationInstance[]> =>
         fetchApi('/automation/instances'),

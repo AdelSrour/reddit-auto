@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { LogIn, UserPlus } from 'lucide-react';
-import { Button, Card, CardHeader, CardContent, Badge } from '@/components/ui';
+import { Button, Card, CardHeader, CardContent, Badge, LiveBrowserModal } from '@/components/ui';
 import type { ActionResult, ActionLog } from '@/lib/types';
 
 interface AccountActionsProps {
@@ -21,12 +21,18 @@ export function AccountActions({
   const [lastResult, setLastResult] = useState<ActionResult<unknown> | null>(
     null,
   );
+  const [activeActionId, setActiveActionId] = useState<string | null>(null);
+  const [actionTitle, setActionTitle] = useState('');
 
   const handleLogin = async () => {
     setLoginLoading(true);
     setLastResult(null);
     try {
       const result = await onLogin();
+      if (result.actionId) {
+        setActionTitle('Logging in...');
+        setActiveActionId(result.actionId);
+      }
       setLastResult(result);
     } finally {
       setLoginLoading(false);
@@ -38,10 +44,18 @@ export function AccountActions({
     setLastResult(null);
     try {
       const result = await onRegister();
+      if (result.actionId) {
+        setActionTitle('Registering...');
+        setActiveActionId(result.actionId);
+      }
       setLastResult(result);
     } finally {
       setRegisterLoading(false);
     }
+  };
+
+  const handleModalClose = () => {
+    setActiveActionId(null);
   };
 
   const isAnyLoading = loginLoading || registerLoading;
@@ -134,6 +148,12 @@ export function AccountActions({
           )}
         </CardContent>
       </Card>
+
+      <LiveBrowserModal
+        actionId={activeActionId}
+        onClose={handleModalClose}
+        title={actionTitle}
+      />
     </div>
   );
 }

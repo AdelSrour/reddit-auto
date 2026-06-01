@@ -5,3 +5,5 @@ export { useAutomationInstances } from './useAutomationInstances';
 export { useAutomationInstance } from './useAutomationInstance';
 export { useInstanceForm } from './useInstanceForm';
 export { useDashboardData } from './useDashboardData';
+export { useActionStream } from './useActionStream';
+export type { ActionStreamStatus } from './useActionStream';

@@ -26,6 +26,7 @@ export interface ActionLog {
 
 export interface ActionResult<T = void> {
   success: boolean;
+  actionId?: string;
   data?: T;
   error?: {
     code: string;

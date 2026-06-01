@@ -13,7 +13,7 @@ export function LiveBrowserModal({
   actionId,
   onClose,
   title = 'Action in Progress',
-}: LiveBrowserModalProps): JSX.Element | null {
+}: LiveBrowserModalProps) {
   const { screenshot, status, error } = useActionStream(actionId);
 
   if (!actionId) return null;

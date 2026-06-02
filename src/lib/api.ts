@@ -2,6 +2,7 @@ import type {
   Account,
   ActionLog,
   ActionResult,
+  ActionStartResponse,
   CreateAccountInput,
   UpdateAccountInput,
   ExecuteReplyInput,
@@ -89,12 +90,12 @@ export const api = {
   },
 
   actions: {
-    login: (accountId: string): Promise<ActionResult> =>
+    login: (accountId: string): Promise<ActionStartResponse> =>
       fetchApi(`/accounts/${accountId}/actions/login`, {
         method: 'POST',
       }),
 
-    register: (accountId: string): Promise<ActionResult> =>
+    register: (accountId: string): Promise<ActionStartResponse> =>
       fetchApi(`/accounts/${accountId}/actions/register`, {
         method: 'POST',
       }),
@@ -102,7 +103,7 @@ export const api = {
     reply: (
       accountId: string,
       input: ExecuteReplyInput,
-    ): Promise<ActionResult<ReplyOutput>> =>
+    ): Promise<ActionStartResponse> =>
       fetchApi(`/accounts/${accountId}/actions/reply`, {
         method: 'POST',
         body: JSON.stringify(input),

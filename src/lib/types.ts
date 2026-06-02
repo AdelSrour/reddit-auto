@@ -34,6 +34,11 @@ export interface ActionResult<T = void> {
   };
 }
 
+/** Returned immediately when an action is started (result comes via SSE stream). */
+export interface ActionStartResponse {
+  actionId: string;
+}
+
 export interface CreateAccountInput {
   username: string;
   password: string;

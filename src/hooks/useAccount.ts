@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { api, ApiError } from '@/lib/api';
-import type { Account, ActionLog, ActionResult } from '@/lib/types';
+import type { Account, ActionLog, ActionStartResponse } from '@/lib/types';
 
 interface UseAccountReturn {
   account: Account | null;
@@ -10,8 +10,8 @@ interface UseAccountReturn {
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
-  executeLogin: () => Promise<ActionResult>;
-  executeRegister: () => Promise<ActionResult>;
+  executeLogin: () => Promise<ActionStartResponse>;
+  executeRegister: () => Promise<ActionStartResponse>;
 }
 
 export function useAccount(id: string): UseAccountReturn {
@@ -57,17 +57,13 @@ export function useAccount(id: string): UseAccountReturn {
     };
   }, [fetchAccount]);
 
-  const executeLogin = useCallback(async (): Promise<ActionResult> => {
-    const result = await api.actions.login(id);
-    await fetchAccount();
-    return result;
-  }, [id, fetchAccount]);
+  const executeLogin = useCallback(async (): Promise<ActionStartResponse> => {
+    return api.actions.login(id);
+  }, [id]);
 
-  const executeRegister = useCallback(async (): Promise<ActionResult> => {
-    const result = await api.actions.register(id);
-    await fetchAccount();
-    return result;
-  }, [id, fetchAccount]);
+  const executeRegister = useCallback(async (): Promise<ActionStartResponse> => {
+    return api.actions.register(id);
+  }, [id]);
 
   return {
     account,

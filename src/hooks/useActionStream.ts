@@ -37,9 +37,7 @@ export function useActionStream(actionId: string | null): ActionStreamState {
       return;
     }
 
-    const eventSource = new EventSource(
-      `/api/proxy/actions/stream/${actionId}`
-    );
+    const eventSource = new EventSource(`/api/action-stream/${actionId}`);
 
     eventSource.addEventListener('screenshot', (e: MessageEvent) => {
       setState((prev) => ({
@@ -86,11 +84,19 @@ export function useActionStream(actionId: string | null): ActionStreamState {
     });
 
     eventSource.onerror = () => {
-      setState((prev) => ({
-        ...prev,
-        status: prev.status === 'connecting' ? 'error' : prev.status,
-        error: prev.status === 'connecting' ? 'Failed to connect' : prev.error,
-      }));
+      setState((prev) => {
+        if (prev.status === 'success' || prev.status === 'error') {
+          return prev;
+        }
+        if (prev.status === 'connecting') {
+          return {
+            ...prev,
+            status: 'error',
+            error: 'Failed to connect to live stream',
+          };
+        }
+        return prev;
+      });
       eventSource.close();
     };
 

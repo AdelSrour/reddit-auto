@@ -3,37 +3,40 @@
 import { useState } from 'react';
 import { LogIn, UserPlus } from 'lucide-react';
 import { Button, Card, CardHeader, CardContent, Badge, LiveBrowserModal } from '@/components/ui';
-import type { ActionResult, ActionLog } from '@/lib/types';
+import type { ActionLog, ActionStartResponse } from '@/lib/types';
 
 interface AccountActionsProps {
-  onLogin: () => Promise<ActionResult>;
-  onRegister: () => Promise<ActionResult>;
+  onLogin: () => Promise<ActionStartResponse>;
+  onRegister: () => Promise<ActionStartResponse>;
+  onActionComplete?: () => Promise<void>;
   logs: ActionLog[];
 }
 
 export function AccountActions({
   onLogin,
   onRegister,
+  onActionComplete,
   logs,
 }: AccountActionsProps) {
   const [loginLoading, setLoginLoading] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
-  const [lastResult, setLastResult] = useState<ActionResult<unknown> | null>(
-    null,
-  );
+  const [lastResult, setLastResult] = useState<{
+    success: boolean;
+    message?: string;
+  } | null>(null);
   const [activeActionId, setActiveActionId] = useState<string | null>(null);
   const [actionTitle, setActionTitle] = useState('');
 
   const handleLogin = async () => {
     setLoginLoading(true);
     setLastResult(null);
+    setActionTitle('Logging in...');
     try {
-      const result = await onLogin();
-      if (result.actionId) {
-        setActionTitle('Logging in...');
-        setActiveActionId(result.actionId);
-      }
-      setLastResult(result);
+      const { actionId } = await onLogin();
+      setActiveActionId(actionId);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to start login';
+      setLastResult({ success: false, message });
     } finally {
       setLoginLoading(false);
     }
@@ -42,16 +45,28 @@ export function AccountActions({
   const handleRegister = async () => {
     setRegisterLoading(true);
     setLastResult(null);
+    setActionTitle('Registering...');
     try {
-      const result = await onRegister();
-      if (result.actionId) {
-        setActionTitle('Registering...');
-        setActiveActionId(result.actionId);
-      }
-      setLastResult(result);
+      const { actionId } = await onRegister();
+      setActiveActionId(actionId);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Failed to start registration';
+      setLastResult({ success: false, message });
     } finally {
       setRegisterLoading(false);
     }
+  };
+
+  const handleStreamComplete = async (
+    success: boolean,
+    errorMessage: string | null,
+  ): Promise<void> => {
+    await onActionComplete?.();
+    setLastResult({
+      success,
+      message: errorMessage ?? undefined,
+    });
   };
 
   const handleModalClose = () => {
@@ -102,10 +117,8 @@ export function AccountActions({
               >
                 {lastResult.success ? 'Action completed successfully' : 'Action failed'}
               </p>
-              {lastResult.error && (
-                <p className="mt-1 text-sm text-destructive">
-                  {lastResult.error.code}: {lastResult.error.message}
-                </p>
+              {lastResult.message && (
+                <p className="mt-1 text-sm text-destructive">{lastResult.message}</p>
               )}
             </div>
           )}
@@ -152,6 +165,7 @@ export function AccountActions({
       <LiveBrowserModal
         actionId={activeActionId}
         onClose={handleModalClose}
+        onComplete={handleStreamComplete}
         title={actionTitle}
       />
     </div>

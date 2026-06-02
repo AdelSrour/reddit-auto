@@ -1,20 +1,39 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { useActionStream } from '@/hooks/useActionStream';
 import { Button } from './Button';
 
 interface LiveBrowserModalProps {
   actionId: string | null;
   onClose: () => void;
+  onComplete?: (success: boolean, errorMessage: string | null) => void | Promise<void>;
   title?: string;
 }
 
 export function LiveBrowserModal({
   actionId,
   onClose,
+  onComplete,
   title = 'Action in Progress',
 }: LiveBrowserModalProps) {
   const { screenshot, status, error } = useActionStream(actionId);
+  const completedRef = useRef(false);
+
+  useEffect(() => {
+    if (actionId === null) {
+      completedRef.current = false;
+      return;
+    }
+
+    if (
+      (status === 'success' || status === 'error') &&
+      !completedRef.current
+    ) {
+      completedRef.current = true;
+      void onComplete?.(status === 'success', error);
+    }
+  }, [actionId, status, error, onComplete]);
 
   if (!actionId) return null;
 

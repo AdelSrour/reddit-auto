@@ -11,7 +11,6 @@ import type {
   ActionResult,
   ReplyOutput,
   UpdateInstanceInput,
-  ActionStartResponse,
 } from '@/lib/types';
 
 interface UseAutomationInstanceReturn {
@@ -33,8 +32,6 @@ interface UseAutomationInstanceReturn {
   setCompletedPage: (page: number) => void;
   setScheduledPage: (page: number) => void;
   executeReply: (matchId: string) => Promise<ActionResult<ReplyOutput>>;
-  startStreamingReply: (matchId: string) => Promise<string | null>;
-  onStreamingReplyComplete: (success: boolean) => Promise<void>;
   scheduleReply: (matchId: string, delayMinutes: number) => Promise<void>;
   cancelScheduled: (scheduledId: string) => Promise<void>;
   updateInstance: (data: UpdateInstanceInput) => Promise<void>;
@@ -173,29 +170,6 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
     }
   }, [id, refreshPosts]);
 
-  const startStreamingReply = useCallback(async (matchId: string): Promise<string | null> => {
-    if (!instance) return null;
-    setReplying(true);
-    setError(null);
-    try {
-      const response: ActionStartResponse = await api.actions.reply(instance.accountId, { matchId });
-      return response.actionId;
-    } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      }
-      setReplying(false);
-      return null;
-    }
-  }, [instance]);
-
-  const onStreamingReplyComplete = useCallback(async (success: boolean) => {
-    setReplying(false);
-    if (success) {
-      await refreshPosts();
-    }
-  }, [refreshPosts]);
-
   const scheduleReply = useCallback(async (matchId: string, delayMinutes: number) => {
     setScheduling(true);
     setError(null);
@@ -255,8 +229,6 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
     setCompletedPage,
     setScheduledPage,
     executeReply,
-    startStreamingReply,
-    onStreamingReplyComplete,
     scheduleReply,
     cancelScheduled,
     updateInstance,

@@ -1,10 +1,10 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout';
-import { Button, Badge, Card, CardContent } from '@/components/ui';
+import { Button, Badge, Card, CardContent, LiveBrowserModal } from '@/components/ui';
 import {
   AvailablePostsTable,
   ScheduledRepliesTable,
@@ -35,6 +35,8 @@ export default function InstanceDetailPage({ params }: PageProps) {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
   const [statusChanging, setStatusChanging] = useState(false);
+  const [activeActionId, setActiveActionId] = useState<string | null>(null);
+  const [lastReplyError, setLastReplyError] = useState<string | null>(null);
 
   const {
     instance,
@@ -52,7 +54,8 @@ export default function InstanceDetailPage({ params }: PageProps) {
     setPostsPage,
     setCompletedPage,
     setScheduledPage,
-    executeReply,
+    startStreamingReply,
+    onStreamingReplyComplete,
     scheduleReply,
     cancelScheduled,
     updateInstance,
@@ -79,11 +82,23 @@ export default function InstanceDetailPage({ params }: PageProps) {
   };
 
   const handleReply = async (matchId: string) => {
-    const result = await executeReply(matchId);
-    if (!result.success) {
-      alert(`Reply failed: ${result.error?.message ?? 'Unknown error'}`);
+    setLastReplyError(null);
+    const actionId = await startStreamingReply(matchId);
+    if (actionId) {
+      setActiveActionId(actionId);
     }
   };
+
+  const handleModalClose = useCallback(() => {
+    setActiveActionId(null);
+  }, []);
+
+  const handleModalComplete = useCallback(async (success: boolean, errorMessage: string | null) => {
+    await onStreamingReplyComplete(success);
+    if (!success && errorMessage) {
+      setLastReplyError(errorMessage);
+    }
+  }, [onStreamingReplyComplete]);
 
   if (loading) {
     return (
@@ -108,6 +123,13 @@ export default function InstanceDetailPage({ params }: PageProps) {
 
   return (
     <div>
+      <LiveBrowserModal
+        actionId={activeActionId}
+        onClose={handleModalClose}
+        onComplete={handleModalComplete}
+        title="Reply in Progress"
+      />
+
       <Header
         title={instance.title}
         description={instance.description ?? undefined}
@@ -152,6 +174,18 @@ export default function InstanceDetailPage({ params }: PageProps) {
             className="ml-2 text-destructive underline hover:no-underline"
           >
             Retry
+          </button>
+        </div>
+      )}
+
+      {lastReplyError && (
+        <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">
+          Reply failed: {lastReplyError}
+          <button
+            onClick={() => setLastReplyError(null)}
+            className="ml-2 text-destructive underline hover:no-underline"
+          >
+            Dismiss
           </button>
         </div>
       )}

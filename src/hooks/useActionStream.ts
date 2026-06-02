@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-export type ActionStreamStatus = 'idle' | 'connecting' | 'running' | 'success' | 'error';
+export type ActionStreamStatus = 'idle' | 'connecting' | 'starting' | 'browser_ready' | 'running' | 'success' | 'error';
 
 interface ActionStreamState {
   screenshot: string | null;
@@ -47,6 +47,21 @@ export function useActionStream(actionId: string | null): ActionStreamState {
       }));
     });
 
+    eventSource.addEventListener('status', (e: MessageEvent) => {
+      try {
+        const data = JSON.parse(e.data) as { status: string };
+        const newStatus = data.status as ActionStreamStatus;
+        if (newStatus === 'starting' || newStatus === 'browser_ready') {
+          setState((prev) => ({
+            ...prev,
+            status: newStatus,
+          }));
+        }
+      } catch {
+        // Ignore invalid status events
+      }
+    });
+
     eventSource.addEventListener('complete', (e: MessageEvent) => {
       try {
         const data = JSON.parse(e.data) as { success: boolean; error?: string };
@@ -88,11 +103,11 @@ export function useActionStream(actionId: string | null): ActionStreamState {
         if (prev.status === 'success' || prev.status === 'error') {
           return prev;
         }
-        if (prev.status === 'connecting') {
+        if (prev.status === 'connecting' || prev.status === 'starting' || prev.status === 'browser_ready') {
           return {
             ...prev,
             status: 'error',
-            error: 'Failed to connect to live stream',
+            error: 'Connection to live stream lost',
           };
         }
         return prev;

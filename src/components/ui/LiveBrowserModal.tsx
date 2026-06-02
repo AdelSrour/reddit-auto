@@ -37,7 +37,7 @@ export function LiveBrowserModal({
 
   if (!actionId) return null;
 
-  const isRunning = status === 'connecting' || status === 'running';
+  const isRunning = status === 'connecting' || status === 'starting' || status === 'browser_ready' || status === 'running';
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>): void => {
     if (e.target === e.currentTarget && !isRunning) {
@@ -58,6 +58,36 @@ export function LiveBrowserModal({
               {status === 'connecting' && (
                 <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                   Connecting...
+                </span>
+              )}
+              {status === 'starting' && (
+                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                  Starting...
+                </span>
+              )}
+              {status === 'browser_ready' && (
+                <span className="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+                  <svg
+                    className="mr-1 h-3 w-3 animate-spin"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Browser Ready
                 </span>
               )}
               {status === 'running' && (
@@ -128,7 +158,13 @@ export function LiveBrowserModal({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                <span>Connecting to browser...</span>
+                <span>
+                  {status === 'connecting' && 'Connecting to server...'}
+                  {status === 'starting' && 'Starting action...'}
+                  {status === 'browser_ready' && 'Browser ready, waiting for first frame...'}
+                  {status === 'running' && 'Loading...'}
+                  {(status === 'idle' || status === 'success' || status === 'error') && 'Loading...'}
+                </span>
               </div>
             )}
           </div>

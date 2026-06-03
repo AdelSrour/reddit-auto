@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui';
 import { useDashboardData } from '@/hooks';
 import { ReplyStatsCards } from './ReplyStatsCards';
 import { RecentRepliesTable } from './RecentRepliesTable';
+import { StatsHistoryChart } from './StatsHistoryChart';
 
 const quickLinks: Array<{
   href: string;
@@ -41,6 +42,8 @@ export function DashboardContent(): React.ReactNode {
   return (
     <div className="space-y-6">
       <ReplyStatsCards stats={stats} isLoading={loading} />
+
+      <StatsHistoryChart days={30} />
 
       <RecentRepliesTable
         replies={replies}

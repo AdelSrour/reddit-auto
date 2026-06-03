@@ -229,3 +229,37 @@ export interface DailyAutomationResult {
     totalScheduled: number;
   };
 }
+
+// Stats tracking types
+export interface DailyStatsSnapshot {
+  id: string;
+  date: string;
+  totalViews: number;
+  totalUpvotes: number;
+  totalReplies: number;
+  totalShares: number;
+  totalAwards: number;
+  replyCount: number;
+}
+
+export interface StatsUpdateResult {
+  replyId: string;
+  success: boolean;
+  stats?: {
+    views: number;
+    upvotes: number;
+    upvoteRatio: number;
+    replies: number;
+    shares: number;
+    awards: number;
+  };
+  error?: string;
+}
+
+export interface StatsRefreshResult {
+  totalProcessed: number;
+  successful: number;
+  failed: number;
+  skipped: number;
+  results: StatsUpdateResult[];
+}

@@ -23,6 +23,8 @@ import type {
   AvailableAccount,
   AllRepliesResponse,
   DailyAutomationResult,
+  DailyStatsSnapshot,
+  StatsRefreshResult,
 } from './types';
 
 const API_BASE_URL = '/api/proxy';
@@ -221,6 +223,20 @@ export const api = {
       fetchApi('/automation/run-daily', {
         method: 'POST',
       }),
+
+    stats: {
+      refresh: (): Promise<StatsRefreshResult> =>
+        fetchApi('/automation/stats/refresh', {
+          method: 'POST',
+        }),
+
+      history: (days?: number): Promise<DailyStatsSnapshot[]> => {
+        const searchParams = new URLSearchParams();
+        if (days !== undefined) searchParams.set('days', String(days));
+        const query = searchParams.toString();
+        return fetchApi(`/automation/stats/history${query ? `?${query}` : ''}`);
+      },
+    },
   },
 };
 

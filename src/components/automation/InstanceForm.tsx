@@ -3,21 +3,18 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Input, Card, CardContent, Select } from '@/components/ui';
-import { SubredditSelector } from './SubredditSelector';
 import { api, ApiError } from '@/lib/api';
 import type { AutomationInstance, AvailableAccount } from '@/lib/types';
 
 interface InstanceFormProps {
   instance?: AutomationInstance;
   availableAccounts: AvailableAccount[];
-  availableSubreddits: string[];
   mode: 'create' | 'edit';
 }
 
 export function InstanceForm({
   instance,
   availableAccounts,
-  availableSubreddits,
   mode,
 }: InstanceFormProps) {
   const router = useRouter();
@@ -29,9 +26,6 @@ export function InstanceForm({
   const [accountId, setAccountId] = useState(instance?.accountId ?? '');
   const [repliesPerDay, setRepliesPerDay] = useState(
     instance?.repliesPerDay ?? 5
-  );
-  const [selectedSubreddits, setSelectedSubreddits] = useState<string[]>(
-    instance?.subreddits ?? []
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,7 +40,6 @@ export function InstanceForm({
           description: description || undefined,
           accountId,
           repliesPerDay,
-          subreddits: selectedSubreddits,
         });
         router.push('/automation');
       } else if (instance) {
@@ -54,7 +47,6 @@ export function InstanceForm({
           title,
           description: description || undefined,
           repliesPerDay,
-          subreddits: selectedSubreddits,
         });
         router.push(`/automation/${instance.id}`);
       }
@@ -164,17 +156,6 @@ export function InstanceForm({
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              Subreddits *
-            </label>
-            <SubredditSelector
-              availableSubreddits={availableSubreddits}
-              selectedSubreddits={selectedSubreddits}
-              onChange={setSelectedSubreddits}
-            />
-          </div>
-
           <div className="flex justify-end gap-3 pt-4">
             <Button
               type="button"
@@ -186,12 +167,7 @@ export function InstanceForm({
             <Button
               type="submit"
               loading={loading}
-              disabled={
-                !title ||
-                !accountId ||
-                selectedSubreddits.length === 0 ||
-                loading
-              }
+              disabled={!title || !accountId || loading}
             >
               {mode === 'create' ? 'Create Instance' : 'Save Changes'}
             </Button>

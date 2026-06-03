@@ -5,8 +5,7 @@ import { InstanceForm } from '@/components/automation';
 import { useInstanceForm } from '@/hooks';
 
 export default function NewInstancePage() {
-  const { availableAccounts, availableSubreddits, loading, error } =
-    useInstanceForm();
+  const { availableAccounts, loading, error } = useInstanceForm();
 
   return (
     <div>
@@ -36,11 +35,7 @@ export default function NewInstancePage() {
           </p>
         </div>
       ) : (
-        <InstanceForm
-          availableAccounts={availableAccounts}
-          availableSubreddits={availableSubreddits}
-          mode="create"
-        />
+        <InstanceForm availableAccounts={availableAccounts} mode="create" />
       )}
     </div>
   );

@@ -12,12 +12,7 @@ interface PageProps {
 export default function EditInstancePage({ params }: PageProps) {
   const { id } = use(params);
   const { instance, loading: instanceLoading } = useAutomationInstance(id);
-  const {
-    availableAccounts,
-    availableSubreddits,
-    loading: formLoading,
-    error,
-  } = useInstanceForm();
+  const { availableAccounts, loading: formLoading, error } = useInstanceForm();
 
   const loading = instanceLoading || formLoading;
 
@@ -48,7 +43,6 @@ export default function EditInstancePage({ params }: PageProps) {
         <InstanceForm
           instance={instance}
           availableAccounts={availableAccounts}
-          availableSubreddits={availableSubreddits}
           mode="edit"
         />
       )}

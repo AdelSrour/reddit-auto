@@ -1,4 +1,3 @@
-export { SubredditSelector } from './SubredditSelector';
 export { InstanceCard } from './InstanceCard';
 export { InstanceForm } from './InstanceForm';
 export { AvailablePostsTable } from './AvailablePostsTable';

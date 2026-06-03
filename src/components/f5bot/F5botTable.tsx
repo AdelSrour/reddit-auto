@@ -35,8 +35,8 @@ function truncate(text: string, maxLength: number): string {
 
 function getRatingVariant(rating: number | null): 'success' | 'warning' | 'error' | 'default' {
   if (rating === null) return 'default';
-  if (rating >= 4) return 'success';
-  if (rating >= 2) return 'warning';
+  if (rating >= 7) return 'success';
+  if (rating >= 4) return 'warning';
   return 'error';
 }
 
@@ -115,7 +115,7 @@ export function F5botTable({ matches, loading }: F5botTableProps) {
               <TableCell className="text-muted-foreground">u/{match.author}</TableCell>
               <TableCell>
                 {match.rating !== null ? (
-                  <Badge variant={getRatingVariant(match.rating)}>{match.rating}/5</Badge>
+                  <Badge variant={getRatingVariant(match.rating)}>{match.rating}/10</Badge>
                 ) : (
                   <span className="text-muted-foreground/70">-</span>
                 )}

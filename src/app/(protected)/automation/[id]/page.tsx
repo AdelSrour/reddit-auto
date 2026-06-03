@@ -181,22 +181,6 @@ export default function InstanceDetailPage({ params }: PageProps) {
         </Card>
       </div>
 
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="text-sm text-muted-foreground mb-2">Subreddits</div>
-          <div className="flex flex-wrap gap-2">
-            {instance.subreddits.map((sub) => (
-              <span
-                key={sub}
-                className="px-2 py-1 bg-muted text-foreground rounded text-sm"
-              >
-                r/{sub}
-              </span>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       <div className="space-y-8">
         <section>
           <h2 className="text-lg font-semibold text-foreground mb-4">

@@ -58,32 +58,7 @@ export function InstanceCard({ instance }: InstanceCardProps) {
                 {instance.repliesPerDay}
               </span>
             </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Subreddits</span>
-              <span className="font-medium text-foreground">
-                {instance.subreddits.length}
-              </span>
-            </div>
           </div>
-
-          {instance.subreddits.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-1">
-              {instance.subreddits.slice(0, 3).map((sub) => (
-                <span
-                  key={sub}
-                  className="px-2 py-0.5 bg-muted text-muted-foreground rounded text-xs"
-                >
-                  r/{sub}
-                </span>
-              ))}
-              {instance.subreddits.length > 3 && (
-                <span className="px-2 py-0.5 text-muted-foreground text-xs">
-                  +{instance.subreddits.length - 3} more
-                </span>
-              )}
-            </div>
-          )}
         </CardContent>
       </Card>
     </Link>

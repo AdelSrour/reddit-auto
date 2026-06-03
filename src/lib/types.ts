@@ -126,7 +126,6 @@ export interface AutomationInstance {
   accountUsername: string;
   status: AutomationStatus;
   repliesPerDay: number;
-  subreddits: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -136,7 +135,6 @@ export interface CreateInstanceInput {
   description?: string;
   accountId: string;
   repliesPerDay?: number;
-  subreddits: string[];
 }
 
 export interface UpdateInstanceInput {
@@ -144,7 +142,6 @@ export interface UpdateInstanceInput {
   description?: string;
   status?: AutomationStatus;
   repliesPerDay?: number;
-  subreddits?: string[];
 }
 
 export interface AvailablePost {

@@ -209,9 +209,6 @@ export const api = {
         }),
     },
 
-    subreddits: (): Promise<string[]> =>
-      fetchApi('/automation/subreddits'),
-
     availableAccounts: (): Promise<AvailableAccount[]> =>
       fetchApi('/automation/accounts/available'),
 

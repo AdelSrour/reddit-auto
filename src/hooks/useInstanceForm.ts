@@ -6,14 +6,12 @@ import type { AvailableAccount } from '@/lib/types';
 
 interface UseInstanceFormReturn {
   availableAccounts: AvailableAccount[];
-  availableSubreddits: string[];
   loading: boolean;
   error: string | null;
 }
 
 export function useInstanceForm(): UseInstanceFormReturn {
   const [availableAccounts, setAvailableAccounts] = useState<AvailableAccount[]>([]);
-  const [availableSubreddits, setAvailableSubreddits] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
@@ -22,13 +20,9 @@ export function useInstanceForm(): UseInstanceFormReturn {
     setLoading(true);
     setError(null);
     try {
-      const [accounts, subreddits] = await Promise.all([
-        api.automation.availableAccounts(),
-        api.automation.subreddits(),
-      ]);
+      const accounts = await api.automation.availableAccounts();
       if (mountedRef.current) {
         setAvailableAccounts(accounts);
-        setAvailableSubreddits(subreddits);
       }
     } catch (err) {
       if (mountedRef.current) {
@@ -56,7 +50,6 @@ export function useInstanceForm(): UseInstanceFormReturn {
 
   return {
     availableAccounts,
-    availableSubreddits,
     loading,
     error,
   };

@@ -222,3 +222,13 @@ export interface AllRepliesResponse {
   meta: PaginationMeta;
   stats: ReplyStats;
 }
+
+export interface DailyAutomationResult {
+  syncResult: { emailsProcessed: number; newMatches: number } | null;
+  ratingResult: { rated: number; failed: number } | null;
+  schedulingResult: {
+    instancesProcessed: number;
+    instancesSkipped: number;
+    totalScheduled: number;
+  };
+}

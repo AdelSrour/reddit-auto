@@ -22,6 +22,7 @@ import type {
   ReplyOutput,
   AvailableAccount,
   AllRepliesResponse,
+  DailyAutomationResult,
 } from './types';
 
 const API_BASE_URL = '/api/proxy';
@@ -217,6 +218,11 @@ export const api = {
     cancelScheduled: (id: string): Promise<void> =>
       fetchApi(`/automation/scheduled/${id}`, {
         method: 'DELETE',
+      }),
+
+    runDaily: (): Promise<DailyAutomationResult> =>
+      fetchApi('/automation/run-daily', {
+        method: 'POST',
       }),
   },
 };

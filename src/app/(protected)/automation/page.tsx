@@ -1,14 +1,36 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { Bot, Plus } from 'lucide-react';
+import { Bot, Plus, Play } from 'lucide-react';
 import { Header } from '@/components/layout';
 import { Button } from '@/components/ui';
 import { InstanceCard } from '@/components/automation';
 import { useAutomationInstances } from '@/hooks';
+import { api } from '@/lib/api';
+import type { DailyAutomationResult } from '@/lib/types';
 
 export default function AutomationPage() {
   const { instances, loading, error, refresh } = useAutomationInstances();
+  const [runningDaily, setRunningDaily] = useState(false);
+  const [dailyResult, setDailyResult] = useState<DailyAutomationResult | null>(null);
+  const [dailyError, setDailyError] = useState<string | null>(null);
+
+  const handleRunDaily = async (): Promise<void> => {
+    setRunningDaily(true);
+    setDailyResult(null);
+    setDailyError(null);
+
+    try {
+      const result = await api.automation.runDaily();
+      setDailyResult(result);
+      refresh();
+    } catch (err) {
+      setDailyError(err instanceof Error ? err.message : 'Failed to run daily automation');
+    } finally {
+      setRunningDaily(false);
+    }
+  };
 
   return (
     <div>
@@ -16,14 +38,69 @@ export default function AutomationPage() {
         title="Automation"
         description="Manage your automation instances"
         actions={
-          <Link href="/automation/new">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
-              Create Instance
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              onClick={handleRunDaily}
+              disabled={runningDaily}
+            >
+              {runningDaily ? (
+                <>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Running...
+                </>
+              ) : (
+                <>
+                  <Play className="mr-2 h-4 w-4" aria-hidden="true" />
+                  Run Daily Automation
+                </>
+              )}
             </Button>
-          </Link>
+            <Link href="/automation/new">
+              <Button>
+                <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
+                Create Instance
+              </Button>
+            </Link>
+          </div>
         }
       />
+
+      {dailyResult && (
+        <div className="mb-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-green-700 dark:text-green-400">
+          <div className="font-medium mb-2">Daily automation completed</div>
+          <ul className="text-sm space-y-1">
+            {dailyResult.syncResult && (
+              <li>Sync: {dailyResult.syncResult.emailsProcessed} emails, {dailyResult.syncResult.newMatches} new matches</li>
+            )}
+            {dailyResult.ratingResult && (
+              <li>Rating: {dailyResult.ratingResult.rated} rated, {dailyResult.ratingResult.failed} failed</li>
+            )}
+            <li>
+              Scheduling: {dailyResult.schedulingResult.totalScheduled} replies scheduled across {dailyResult.schedulingResult.instancesProcessed} instances
+              {dailyResult.schedulingResult.instancesSkipped > 0 && ` (${dailyResult.schedulingResult.instancesSkipped} skipped)`}
+            </li>
+          </ul>
+          <button
+            onClick={() => setDailyResult(null)}
+            className="mt-2 text-sm underline hover:no-underline"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {dailyError && (
+        <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">
+          Daily automation failed: {dailyError}
+          <button
+            onClick={() => setDailyError(null)}
+            className="ml-2 underline hover:no-underline"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {error && (
         <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">

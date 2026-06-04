@@ -25,6 +25,8 @@ import type {
   DailyAutomationResult,
   DailyStatsSnapshot,
   StatsRefreshResult,
+  GoLoginProfileInfo,
+  OpenBrowserResponse,
 } from './types';
 
 const API_BASE_URL = '/api/proxy';
@@ -107,16 +109,20 @@ export const api = {
 
     getLogs: (id: string): Promise<ActionLog[]> =>
       fetchApi(`/accounts/${id}/logs`),
+
+    populateProfiles: (): Promise<{ created: number }> =>
+      fetchApi('/accounts/profiles/populate', { method: 'POST' }),
+
+    listGoLoginProfiles: (): Promise<GoLoginProfileInfo[]> =>
+      fetchApi('/accounts/gologin/profiles'),
+
+    openBrowser: (accountId: string): Promise<OpenBrowserResponse> =>
+      fetchApi(`/accounts/${accountId}/browser/open`, { method: 'POST' }),
   },
 
   actions: {
     login: (accountId: string): Promise<ActionStartResponse> =>
       fetchApi(`/accounts/${accountId}/actions/login`, {
-        method: 'POST',
-      }),
-
-    register: (accountId: string): Promise<ActionStartResponse> =>
-      fetchApi(`/accounts/${accountId}/actions/register`, {
         method: 'POST',
       }),
 

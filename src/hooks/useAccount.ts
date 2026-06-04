@@ -2,7 +2,12 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { api, ApiError } from '@/lib/api';
-import type { Account, ActionLog, ActionStartResponse } from '@/lib/types';
+import type { Account, ActionLog, OpenBrowserResponse } from '@/lib/types';
+
+interface LoginResult {
+  success: boolean;
+  message?: string;
+}
 
 interface UseAccountReturn {
   account: Account | null;
@@ -10,8 +15,53 @@ interface UseAccountReturn {
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
-  executeLogin: () => Promise<ActionStartResponse>;
-  executeRegister: () => Promise<ActionStartResponse>;
+  verifyLogin: () => Promise<LoginResult>;
+  openBrowser: () => Promise<OpenBrowserResponse>;
+}
+
+function waitForActionCompletion(actionId: string): Promise<LoginResult> {
+  return new Promise((resolve) => {
+    const eventSource = new EventSource(`/api/action-stream/${actionId}`);
+
+    const cleanup = () => {
+      eventSource.close();
+    };
+
+    eventSource.addEventListener('complete', (e: MessageEvent) => {
+      try {
+        const data = JSON.parse(e.data) as { success: boolean; error?: string };
+        cleanup();
+        resolve({
+          success: data.success,
+          message: data.error,
+        });
+      } catch {
+        cleanup();
+        resolve({ success: false, message: 'Failed to parse result' });
+      }
+    });
+
+    eventSource.addEventListener('error', (e: MessageEvent) => {
+      try {
+        const data = JSON.parse(e.data) as { error: string };
+        cleanup();
+        resolve({ success: false, message: data.error });
+      } catch {
+        cleanup();
+        resolve({ success: false, message: 'Action failed' });
+      }
+    });
+
+    eventSource.onerror = () => {
+      cleanup();
+      resolve({ success: false, message: 'Connection lost' });
+    };
+
+    setTimeout(() => {
+      cleanup();
+      resolve({ success: false, message: 'Verification timed out' });
+    }, 120000);
+  });
 }
 
 export function useAccount(id: string): UseAccountReturn {
@@ -57,12 +107,13 @@ export function useAccount(id: string): UseAccountReturn {
     };
   }, [fetchAccount]);
 
-  const executeLogin = useCallback(async (): Promise<ActionStartResponse> => {
-    return api.actions.login(id);
+  const verifyLogin = useCallback(async (): Promise<LoginResult> => {
+    const { actionId } = await api.actions.login(id);
+    return waitForActionCompletion(actionId);
   }, [id]);
 
-  const executeRegister = useCallback(async (): Promise<ActionStartResponse> => {
-    return api.actions.register(id);
+  const openBrowser = useCallback(async (): Promise<OpenBrowserResponse> => {
+    return api.accounts.openBrowser(id);
   }, [id]);
 
   return {
@@ -71,7 +122,7 @@ export function useAccount(id: string): UseAccountReturn {
     loading,
     error,
     refresh: fetchAccount,
-    executeLogin,
-    executeRegister,
+    verifyLogin,
+    openBrowser,
   };
 }

@@ -38,6 +38,9 @@ export function AccountList({ accounts, onDelete }: AccountListProps) {
               Status
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              GoLogin
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Proxy
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -62,6 +65,11 @@ export function AccountList({ accounts, onDelete }: AccountListProps) {
               <td className="px-6 py-4 whitespace-nowrap">
                 <Badge variant={account.isActive ? 'success' : 'error'}>
                   {account.isActive ? 'Active' : 'Inactive'}
+                </Badge>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <Badge variant={account.gologinProfileId ? 'success' : 'warning'}>
+                  {account.gologinProfileId ? 'Linked' : 'Not Linked'}
                 </Badge>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">

@@ -13,7 +13,7 @@ interface PageProps {
 
 export default function AccountDetailPage({ params }: PageProps) {
   const { id } = use(params);
-  const { account, logs, loading, error, refresh, executeLogin, executeRegister } =
+  const { account, logs, loading, error, refresh, verifyLogin, openBrowser } =
     useAccount(id);
 
   if (loading) {
@@ -79,6 +79,19 @@ export default function AccountDetailPage({ params }: PageProps) {
                 </dd>
               </div>
               <div>
+                <dt className="text-sm text-muted-foreground">GoLogin Profile</dt>
+                <dd className="flex items-center gap-2">
+                  <Badge variant={account.gologinProfileId ? 'success' : 'warning'}>
+                    {account.gologinProfileId ? 'Linked' : 'Not Linked'}
+                  </Badge>
+                  {account.gologinProfileId && (
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {account.gologinProfileId.slice(0, 8)}...
+                    </span>
+                  )}
+                </dd>
+              </div>
+              <div>
                 <dt className="text-sm text-muted-foreground">Proxy</dt>
                 <dd className="text-sm font-medium text-foreground">
                   {account.proxyHost
@@ -114,8 +127,8 @@ export default function AccountDetailPage({ params }: PageProps) {
 
         <div className="lg:col-span-2">
           <AccountActions
-            onLogin={executeLogin}
-            onRegister={executeRegister}
+            onLogin={verifyLogin}
+            onOpenBrowser={openBrowser}
             onActionComplete={refresh}
             logs={logs}
           />

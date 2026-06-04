@@ -1,79 +1,62 @@
 'use client';
 
 import { useState } from 'react';
-import { LogIn, UserPlus } from 'lucide-react';
-import { Button, Card, CardHeader, CardContent, Badge, LiveBrowserModal } from '@/components/ui';
-import type { ActionLog, ActionStartResponse } from '@/lib/types';
+import { LogIn, ExternalLink, Info } from 'lucide-react';
+import { Button, Card, CardHeader, CardContent, Badge } from '@/components/ui';
+import type { ActionLog, OpenBrowserResponse } from '@/lib/types';
 
 interface AccountActionsProps {
-  onLogin: () => Promise<ActionStartResponse>;
-  onRegister: () => Promise<ActionStartResponse>;
+  onLogin: () => Promise<{ success: boolean; message?: string }>;
+  onOpenBrowser: () => Promise<OpenBrowserResponse>;
   onActionComplete?: () => Promise<void>;
   logs: ActionLog[];
 }
 
 export function AccountActions({
   onLogin,
-  onRegister,
+  onOpenBrowser,
   onActionComplete,
   logs,
 }: AccountActionsProps) {
   const [loginLoading, setLoginLoading] = useState(false);
-  const [registerLoading, setRegisterLoading] = useState(false);
+  const [browserLoading, setBrowserLoading] = useState(false);
   const [lastResult, setLastResult] = useState<{
     success: boolean;
     message?: string;
   } | null>(null);
-  const [activeActionId, setActiveActionId] = useState<string | null>(null);
-  const [actionTitle, setActionTitle] = useState('');
 
   const handleLogin = async () => {
     setLoginLoading(true);
     setLastResult(null);
-    setActionTitle('Logging in...');
     try {
-      const { actionId } = await onLogin();
-      setActiveActionId(actionId);
+      const result = await onLogin();
+      setLastResult(result);
+      await onActionComplete?.();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to start login';
+      const message = err instanceof Error ? err.message : 'Failed to verify login';
       setLastResult({ success: false, message });
     } finally {
       setLoginLoading(false);
     }
   };
 
-  const handleRegister = async () => {
-    setRegisterLoading(true);
+  const handleOpenBrowser = async () => {
+    setBrowserLoading(true);
     setLastResult(null);
-    setActionTitle('Registering...');
     try {
-      const { actionId } = await onRegister();
-      setActiveActionId(actionId);
+      const { liveViewUrl } = await onOpenBrowser();
+      window.open(liveViewUrl, '_blank');
+      setLastResult({ success: true, message: 'Browser opened in new tab' });
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : 'Failed to start registration';
+        err instanceof Error ? err.message : 'Failed to open browser';
       setLastResult({ success: false, message });
     } finally {
-      setRegisterLoading(false);
+      setBrowserLoading(false);
     }
   };
 
-  const handleStreamComplete = async (
-    success: boolean,
-    errorMessage: string | null,
-  ): Promise<void> => {
-    await onActionComplete?.();
-    setLastResult({
-      success,
-      message: errorMessage ?? undefined,
-    });
-  };
-
-  const handleModalClose = () => {
-    setActiveActionId(null);
-  };
-
-  const isAnyLoading = loginLoading || registerLoading;
+  const isAnyLoading = loginLoading || browserLoading;
 
   return (
     <div className="space-y-6">
@@ -82,6 +65,20 @@ export function AccountActions({
           <h2 className="text-lg font-semibold text-foreground">Actions</h2>
         </CardHeader>
         <CardContent>
+          <div className="mb-4 p-3 rounded-lg border border-border bg-muted/50">
+            <div className="flex items-start gap-2">
+              <Info className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" aria-hidden="true" />
+              <div className="text-sm text-muted-foreground">
+                <p className="font-medium text-foreground">GoLogin Cloud Browser</p>
+                <p className="mt-1">
+                  Click &quot;Open Browser&quot; to launch a cloud browser session.
+                  You can login to Reddit, register new accounts, or perform any manual actions.
+                  The session is saved automatically.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <div className="flex flex-wrap gap-3">
             <Button
               onClick={handleLogin}
@@ -89,16 +86,16 @@ export function AccountActions({
               disabled={isAnyLoading && !loginLoading}
             >
               <LogIn className="mr-2 h-4 w-4" aria-hidden="true" />
-              Login
+              Verify Login
             </Button>
             <Button
-              onClick={handleRegister}
-              loading={registerLoading}
-              disabled={isAnyLoading && !registerLoading}
+              onClick={handleOpenBrowser}
+              loading={browserLoading}
+              disabled={isAnyLoading && !browserLoading}
               variant="secondary"
             >
-              <UserPlus className="mr-2 h-4 w-4" aria-hidden="true" />
-              Register
+              <ExternalLink className="mr-2 h-4 w-4" aria-hidden="true" />
+              Open Browser
             </Button>
           </div>
 
@@ -118,7 +115,9 @@ export function AccountActions({
                 {lastResult.success ? 'Action completed successfully' : 'Action failed'}
               </p>
               {lastResult.message && (
-                <p className="mt-1 text-sm text-destructive">{lastResult.message}</p>
+                <p className={`mt-1 text-sm ${lastResult.success ? 'text-muted-foreground' : 'text-destructive'}`}>
+                  {lastResult.message}
+                </p>
               )}
             </div>
           )}
@@ -161,13 +160,6 @@ export function AccountActions({
           )}
         </CardContent>
       </Card>
-
-      <LiveBrowserModal
-        actionId={activeActionId}
-        onClose={handleModalClose}
-        onComplete={handleStreamComplete}
-        title={actionTitle}
-      />
     </div>
   );
 }

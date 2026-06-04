@@ -8,4 +8,3 @@ export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '.
 export { Pagination } from './Pagination';
 export { Select } from './Select';
 export type { SelectProps, SelectOption } from './Select';
-export { LiveBrowserModal } from './LiveBrowserModal';

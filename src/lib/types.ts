@@ -2,6 +2,7 @@ export interface Account {
   id: string;
   username: string;
   password: string;
+  gologinProfileId: string | null;
   proxyHost: string | null;
   proxyPort: number | null;
   proxyUsername: string | null;
@@ -46,6 +47,20 @@ export interface CreateAccountInput {
   proxyPort?: number;
   proxyUsername?: string;
   proxyPassword?: string;
+  gologinProfileId?: string;
+}
+
+export interface GoLoginProfileInfo {
+  id: string;
+  name: string;
+  notes: string | null;
+  createdAt: string;
+  isLinked: boolean;
+}
+
+export interface OpenBrowserResponse {
+  liveViewUrl: string;
+  profileId: string;
 }
 
 export interface UpdateAccountInput {

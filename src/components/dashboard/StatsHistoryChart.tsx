@@ -32,7 +32,7 @@ interface StatsHistoryChartProps {
 }
 
 const LINE_COLORS = {
-  views: 'hsl(var(--primary))',
+  views: 'hsl(0, 84%, 60%)',
   upvotes: 'hsl(142, 76%, 36%)',
   replies: 'hsl(221, 83%, 53%)',
 } as const;
@@ -137,7 +137,7 @@ export function StatsHistoryChart({
                 transition-all duration-200 border
                 ${
                   visibleLines.views
-                    ? 'bg-primary/10 border-primary/30 text-primary'
+                    ? 'bg-red-500/10 border-red-500/30 text-red-700 dark:text-red-400'
                     : 'bg-muted/50 border-muted text-muted-foreground opacity-60'
                 }
               `}

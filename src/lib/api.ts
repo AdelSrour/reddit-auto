@@ -65,6 +65,23 @@ async function fetchApi<T>(
   return response.json() as Promise<T>;
 }
 
+function buildF5botQueryString(params?: F5botQueryParams): string {
+  const searchParams = new URLSearchParams();
+  if (params?.page !== undefined) searchParams.set('page', String(params.page));
+  if (params?.limit !== undefined) searchParams.set('limit', String(params.limit));
+  if (params?.keyword !== undefined && params.keyword !== '') {
+    searchParams.set('keyword', params.keyword);
+  }
+  if (params?.sourceType !== undefined) searchParams.set('sourceType', params.sourceType);
+  if (params?.subreddit !== undefined && params.subreddit !== '') {
+    searchParams.set('subreddit', params.subreddit);
+  }
+  if (params?.minRating !== undefined) searchParams.set('minRating', String(params.minRating));
+  if (params?.fromDate !== undefined) searchParams.set('fromDate', params.fromDate);
+  if (params?.toDate !== undefined) searchParams.set('toDate', params.toDate);
+  return searchParams.toString();
+}
+
 export const api = {
   accounts: {
     list: (): Promise<Account[]> => fetchApi('/accounts'),
@@ -115,16 +132,7 @@ export const api = {
 
   f5bot: {
     list: (params?: F5botQueryParams): Promise<PaginatedResponse<F5botMatch>> => {
-      const searchParams = new URLSearchParams();
-      if (params?.page !== undefined) searchParams.set('page', String(params.page));
-      if (params?.limit !== undefined) searchParams.set('limit', String(params.limit));
-      if (params?.keyword !== undefined && params.keyword !== '') searchParams.set('keyword', params.keyword);
-      if (params?.sourceType !== undefined) searchParams.set('sourceType', params.sourceType);
-      if (params?.subreddit !== undefined && params.subreddit !== '') searchParams.set('subreddit', params.subreddit);
-      if (params?.minRating !== undefined) searchParams.set('minRating', String(params.minRating));
-      if (params?.fromDate !== undefined) searchParams.set('fromDate', params.fromDate);
-      if (params?.toDate !== undefined) searchParams.set('toDate', params.toDate);
-      const query = searchParams.toString();
+      const query = buildF5botQueryString(params);
       return fetchApi(`/f5bot/matches${query ? `?${query}` : ''}`);
     },
 
@@ -174,11 +182,11 @@ export const api = {
           method: 'DELETE',
         }),
 
-      getPosts: (id: string, page?: number, limit?: number): Promise<PaginatedResponse<AvailablePost>> => {
-        const searchParams = new URLSearchParams();
-        if (page !== undefined) searchParams.set('page', String(page));
-        if (limit !== undefined) searchParams.set('limit', String(limit));
-        const query = searchParams.toString();
+      getPosts: (
+        id: string,
+        params?: F5botQueryParams,
+      ): Promise<PaginatedResponse<AvailablePost>> => {
+        const query = buildF5botQueryString(params);
         return fetchApi(`/automation/instances/${id}/posts${query ? `?${query}` : ''}`);
       },
 

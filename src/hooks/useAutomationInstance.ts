@@ -11,6 +11,7 @@ import type {
   ActionResult,
   ReplyOutput,
   UpdateInstanceInput,
+  F5botQueryParams,
 } from '@/lib/types';
 
 interface UseAutomationInstanceReturn {
@@ -28,6 +29,8 @@ interface UseAutomationInstanceReturn {
   error: string | null;
   refresh: () => Promise<void>;
   refreshPosts: () => Promise<void>;
+  postsParams: F5botQueryParams;
+  setPostsParams: (params: F5botQueryParams) => void;
   setPostsPage: (page: number) => void;
   setCompletedPage: (page: number) => void;
   setScheduledPage: (page: number) => void;
@@ -50,7 +53,10 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
   const [replying, setReplying] = useState(false);
   const [scheduling, setScheduling] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [postsPage, setPostsPage] = useState(1);
+  const [postsParams, setPostsParams] = useState<F5botQueryParams>({
+    page: 1,
+    limit: 20,
+  });
   const [completedPage, setCompletedPage] = useState(1);
   const [scheduledPage, setScheduledPage] = useState(1);
   const mountedRef = useRef(true);
@@ -81,7 +87,7 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
   const fetchPosts = useCallback(async () => {
     setPostsLoading(true);
     try {
-      const response = await api.automation.instances.getPosts(id, postsPage, 20);
+      const response = await api.automation.instances.getPosts(id, postsParams);
       if (mountedRef.current) {
         setPosts(response.data);
         setPostsMeta(response.meta);
@@ -95,7 +101,11 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
         setPostsLoading(false);
       }
     }
-  }, [id, postsPage]);
+  }, [id, postsParams]);
+
+  const setPostsPage = useCallback((page: number) => {
+    setPostsParams((prev) => ({ ...prev, page }));
+  }, []);
 
   const fetchCompleted = useCallback(async () => {
     try {
@@ -225,6 +235,8 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
     error,
     refresh,
     refreshPosts,
+    postsParams,
+    setPostsParams,
     setPostsPage,
     setCompletedPage,
     setScheduledPage,

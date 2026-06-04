@@ -10,6 +10,7 @@ import {
   ScheduledRepliesTable,
   CompletedRepliesTable,
 } from '@/components/automation';
+import { F5botFilters } from '@/components/f5bot';
 import { useAutomationInstance } from '@/hooks';
 import { api } from '@/lib/api';
 import type { AutomationStatus } from '@/lib/types';
@@ -49,6 +50,8 @@ export default function InstanceDetailPage({ params }: PageProps) {
     replying,
     error,
     refresh,
+    postsParams,
+    setPostsParams,
     setPostsPage,
     setCompletedPage,
     setScheduledPage,
@@ -186,6 +189,7 @@ export default function InstanceDetailPage({ params }: PageProps) {
           <h2 className="text-lg font-semibold text-foreground mb-4">
             Available Posts
           </h2>
+          <F5botFilters params={postsParams} onParamsChange={setPostsParams} />
           <Card>
             <CardContent className="p-4">
               <AvailablePostsTable

@@ -8,7 +8,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from 'recharts';
 import { Card, CardContent } from '@/components/ui';
@@ -17,17 +16,26 @@ import type { DailyStatsSnapshot } from '@/lib/types';
 
 interface ChartDataPoint {
   date: string;
-  views: number;
-  upvotes: number;
-  replies: number;
-  shares: number;
   dailyViews: number;
   dailyUpvotes: number;
+  dailyReplies: number;
+}
+
+interface VisibleLines {
+  views: boolean;
+  upvotes: boolean;
+  replies: boolean;
 }
 
 interface StatsHistoryChartProps {
   days?: number;
 }
+
+const LINE_COLORS = {
+  views: 'hsl(var(--primary))',
+  upvotes: 'hsl(142, 76%, 36%)',
+  replies: 'hsl(221, 83%, 53%)',
+} as const;
 
 export function StatsHistoryChart({
   days = 30,
@@ -35,6 +43,11 @@ export function StatsHistoryChart({
   const [data, setData] = useState<ChartDataPoint[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [visibleLines, setVisibleLines] = useState<VisibleLines>({
+    views: true,
+    upvotes: true,
+    replies: true,
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -65,11 +78,18 @@ export function StatsHistoryChart({
     };
   }, [days]);
 
+  function toggleLine(line: keyof VisibleLines): void {
+    setVisibleLines((prev) => ({
+      ...prev,
+      [line]: !prev[line],
+    }));
+  }
+
   if (isLoading) {
     return (
-      <Card>
+      <Card className="shadow-sm">
         <CardContent className="pt-6">
-          <div className="h-[300px] flex items-center justify-center">
+          <div className="h-[350px] flex items-center justify-center">
             <div className="text-muted-foreground">Loading stats...</div>
           </div>
         </CardContent>
@@ -79,9 +99,9 @@ export function StatsHistoryChart({
 
   if (error !== null) {
     return (
-      <Card>
+      <Card className="shadow-sm">
         <CardContent className="pt-6">
-          <div className="h-[300px] flex items-center justify-center">
+          <div className="h-[350px] flex items-center justify-center">
             <div className="text-destructive">{error}</div>
           </div>
         </CardContent>
@@ -91,9 +111,9 @@ export function StatsHistoryChart({
 
   if (data.length === 0) {
     return (
-      <Card>
+      <Card className="shadow-sm">
         <CardContent className="pt-6">
-          <div className="h-[300px] flex items-center justify-center">
+          <div className="h-[350px] flex items-center justify-center">
             <div className="text-muted-foreground">
               No stats data available yet. Stats are collected daily.
             </div>
@@ -103,49 +123,82 @@ export function StatsHistoryChart({
     );
   }
 
-  const latestData = data[data.length - 1];
-  const previousData = data.length > 1 ? data[data.length - 2] : null;
-
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardContent className="pt-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Reply Performance</h3>
-          {latestData !== undefined && (
-            <div className="flex gap-4 text-sm">
-              <div>
-                <span className="text-muted-foreground">Today: </span>
-                <span className="font-medium">
-                  +{latestData.dailyViews} views
-                </span>
-              </div>
-              {previousData !== null && (
-                <div>
-                  <span className="text-muted-foreground">vs yesterday: </span>
-                  <span
-                    className={
-                      latestData.dailyViews >= previousData.dailyViews
-                        ? 'text-green-600'
-                        : 'text-red-600'
-                    }
-                  >
-                    {latestData.dailyViews >= previousData.dailyViews
-                      ? '+'
-                      : ''}
-                    {latestData.dailyViews - previousData.dailyViews}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold">Daily Performance</h3>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => toggleLine('views')}
+              className={`
+                inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium
+                transition-all duration-200 border
+                ${
+                  visibleLines.views
+                    ? 'bg-primary/10 border-primary/30 text-primary'
+                    : 'bg-muted/50 border-muted text-muted-foreground opacity-60'
+                }
+              `}
+            >
+              <span
+                className="w-2.5 h-2.5 rounded-full"
+                style={{ backgroundColor: LINE_COLORS.views }}
+              />
+              Views
+            </button>
+            <button
+              type="button"
+              onClick={() => toggleLine('upvotes')}
+              className={`
+                inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium
+                transition-all duration-200 border
+                ${
+                  visibleLines.upvotes
+                    ? 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400'
+                    : 'bg-muted/50 border-muted text-muted-foreground opacity-60'
+                }
+              `}
+            >
+              <span
+                className="w-2.5 h-2.5 rounded-full"
+                style={{ backgroundColor: LINE_COLORS.upvotes }}
+              />
+              Upvotes
+            </button>
+            <button
+              type="button"
+              onClick={() => toggleLine('replies')}
+              className={`
+                inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium
+                transition-all duration-200 border
+                ${
+                  visibleLines.replies
+                    ? 'bg-blue-500/10 border-blue-500/30 text-blue-700 dark:text-blue-400'
+                    : 'bg-muted/50 border-muted text-muted-foreground opacity-60'
+                }
+              `}
+            >
+              <span
+                className="w-2.5 h-2.5 rounded-full"
+                style={{ backgroundColor: LINE_COLORS.replies }}
+              />
+              Replies
+            </button>
+          </div>
         </div>
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={data}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
             >
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <CartesianGrid
+                strokeDasharray="3 3"
+                className="stroke-muted/50"
+                vertical={false}
+              />
               <XAxis
                 dataKey="date"
                 className="text-xs"
@@ -156,13 +209,34 @@ export function StatsHistoryChart({
                     day: 'numeric',
                   });
                 }}
+                label={{
+                  value: 'Date',
+                  position: 'insideBottom',
+                  offset: -20,
+                  className: 'fill-muted-foreground text-xs',
+                }}
+                tickLine={false}
+                axisLine={{ className: 'stroke-muted' }}
               />
-              <YAxis className="text-xs" />
+              <YAxis
+                className="text-xs"
+                label={{
+                  value: 'Number of Replies/Views/Upvotes',
+                  angle: -90,
+                  position: 'insideLeft',
+                  offset: 10,
+                  className: 'fill-muted-foreground text-xs',
+                  style: { textAnchor: 'middle' },
+                }}
+                tickLine={false}
+                axisLine={{ className: 'stroke-muted' }}
+              />
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '0.5rem',
+                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
                 }}
                 labelFormatter={(label) => {
                   if (typeof label !== 'string') return String(label);
@@ -174,32 +248,39 @@ export function StatsHistoryChart({
                   });
                 }}
               />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="views"
-                name="Total Views"
-                stroke="hsl(var(--primary))"
-                strokeWidth={2}
-                dot={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="upvotes"
-                name="Total Upvotes"
-                stroke="hsl(142, 76%, 36%)"
-                strokeWidth={2}
-                dot={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="dailyViews"
-                name="Daily Views"
-                stroke="hsl(221, 83%, 53%)"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                dot={false}
-              />
+              {visibleLines.views && (
+                <Line
+                  type="monotone"
+                  dataKey="dailyViews"
+                  name="Views"
+                  stroke={LINE_COLORS.views}
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 4, strokeWidth: 2 }}
+                />
+              )}
+              {visibleLines.upvotes && (
+                <Line
+                  type="monotone"
+                  dataKey="dailyUpvotes"
+                  name="Upvotes"
+                  stroke={LINE_COLORS.upvotes}
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 4, strokeWidth: 2 }}
+                />
+              )}
+              {visibleLines.replies && (
+                <Line
+                  type="monotone"
+                  dataKey="dailyReplies"
+                  name="Replies"
+                  stroke={LINE_COLORS.replies}
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 4, strokeWidth: 2 }}
+                />
+              )}
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -210,21 +291,12 @@ export function StatsHistoryChart({
 
 function transformData(snapshots: DailyStatsSnapshot[]): ChartDataPoint[] {
   return snapshots.map((snapshot, index) => {
-    const previousSnapshot = index > 0 ? snapshots[index - 1] : null;
+    const prev = index > 0 ? snapshots[index - 1] : null;
     return {
       date: snapshot.date,
-      views: snapshot.totalViews,
-      upvotes: snapshot.totalUpvotes,
-      replies: snapshot.totalReplies,
-      shares: snapshot.totalShares,
-      dailyViews:
-        previousSnapshot !== null
-          ? snapshot.totalViews - previousSnapshot.totalViews
-          : snapshot.totalViews,
-      dailyUpvotes:
-        previousSnapshot !== null
-          ? snapshot.totalUpvotes - previousSnapshot.totalUpvotes
-          : snapshot.totalUpvotes,
+      dailyViews: prev !== null ? snapshot.totalViews - prev.totalViews : snapshot.totalViews,
+      dailyUpvotes: prev !== null ? snapshot.totalUpvotes - prev.totalUpvotes : snapshot.totalUpvotes,
+      dailyReplies: prev !== null ? snapshot.totalReplies - prev.totalReplies : snapshot.totalReplies,
     };
   });
 }

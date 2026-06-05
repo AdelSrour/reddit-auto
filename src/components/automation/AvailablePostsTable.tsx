@@ -74,10 +74,11 @@ export function AvailablePostsTable({
         <TableHeader>
           <TableRow>
             <TableHead>Subreddit</TableHead>
+            <TableHead>Subreddit Score</TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Type</TableHead>
             <TableHead>Author</TableHead>
-            <TableHead>Rating</TableHead>
+            <TableHead>Match Rating</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -93,6 +94,23 @@ export function AvailablePostsTable({
                 >
                   r/{post.subreddit}
                 </a>
+              </TableCell>
+              <TableCell>
+                {post.postingEaseRating !== null ? (
+                  <span
+                    className={`font-medium ${
+                      post.postingEaseRating >= 7
+                        ? 'text-green-600'
+                        : post.postingEaseRating >= 4
+                          ? 'text-yellow-600'
+                          : 'text-destructive'
+                    }`}
+                  >
+                    {post.postingEaseRating}/10
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground/70">-</span>
+                )}
               </TableCell>
               <TableCell>
                 <a

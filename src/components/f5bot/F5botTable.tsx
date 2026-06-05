@@ -90,9 +90,10 @@ export function F5botTable({ matches, loading }: F5botTableProps) {
             <TableHead>Keyword</TableHead>
             <TableHead>Type</TableHead>
             <TableHead>Subreddit</TableHead>
+            <TableHead>Subreddit Score</TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Author</TableHead>
-            <TableHead>Rating</TableHead>
+            <TableHead>Match Rating</TableHead>
             <TableHead>Date</TableHead>
             <TableHead>Link</TableHead>
           </TableRow>
@@ -109,6 +110,15 @@ export function F5botTable({ matches, loading }: F5botTableProps) {
                 </Badge>
               </TableCell>
               <TableCell className="font-medium">r/{match.subreddit}</TableCell>
+              <TableCell>
+                {match.postingEaseRating !== null ? (
+                  <Badge variant={getRatingVariant(match.postingEaseRating)}>
+                    {match.postingEaseRating}/10
+                  </Badge>
+                ) : (
+                  <span className="text-muted-foreground/70">-</span>
+                )}
+              </TableCell>
               <TableCell className="max-w-xs">
                 <span title={match.title}>{truncate(match.title, 50)}</span>
               </TableCell>

@@ -92,6 +92,7 @@ export interface F5botMatch {
   rating: number | null;
   ratingReason: string | null;
   suggestedReply: string | null;
+  postingEaseRating: number | null;
   createdAt: string;
 }
 
@@ -114,6 +115,7 @@ export interface F5botQueryParams {
   sourceType?: F5botSourceType;
   subreddit?: string;
   minRating?: number;
+  minPostingEase?: number;
   fromDate?: string;
   toDate?: string;
 }
@@ -128,6 +130,41 @@ export interface F5botRateResult {
   totalUnrated: number;
   rated: number;
   failed: number;
+}
+
+export type SubredditFetchStatus = 'SUCCESS' | 'NO_RULES' | 'FAILED';
+
+export interface SubredditRule {
+  title: string;
+  description: string;
+}
+
+export interface Subreddit {
+  id: string;
+  name: string;
+  rules: SubredditRule[] | null;
+  rulesRawText: string | null;
+  fetchStatus: SubredditFetchStatus | null;
+  fetchError: string | null;
+  fetchedAt: string | null;
+  postingEaseRating: number | null;
+  postingEaseReason: string | null;
+  postingEaseRatedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SubredditFetchRulesResult {
+  totalNew: number;
+  fetched: number;
+  rated: number;
+  failed: number;
+}
+
+export interface SubredditQueryParams {
+  page?: number;
+  limit?: number;
+  fetchStatus?: SubredditFetchStatus;
 }
 
 // Automation types
@@ -169,6 +206,7 @@ export interface AvailablePost {
   sourceUrl: string;
   content: string;
   rating: number | null;
+  postingEaseRating: number | null;
   createdAt: string;
 }
 

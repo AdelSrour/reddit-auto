@@ -10,6 +10,9 @@ import type {
   F5botQueryParams,
   F5botSyncResult,
   F5botRateResult,
+  Subreddit,
+  SubredditFetchRulesResult,
+  SubredditQueryParams,
   PaginatedResponse,
   AutomationInstance,
   CreateInstanceInput,
@@ -79,6 +82,9 @@ function buildF5botQueryString(params?: F5botQueryParams): string {
     searchParams.set('subreddit', params.subreddit);
   }
   if (params?.minRating !== undefined) searchParams.set('minRating', String(params.minRating));
+  if (params?.minPostingEase !== undefined) {
+    searchParams.set('minPostingEase', String(params.minPostingEase));
+  }
   if (params?.fromDate !== undefined) searchParams.set('fromDate', params.fromDate);
   if (params?.toDate !== undefined) searchParams.set('toDate', params.toDate);
   return searchParams.toString();
@@ -151,6 +157,26 @@ export const api = {
 
     rate: (): Promise<F5botRateResult> =>
       fetchApi('/f5bot/rate', {
+        method: 'POST',
+      }),
+  },
+
+  subreddits: {
+    list: (params?: SubredditQueryParams): Promise<PaginatedResponse<Subreddit>> => {
+      const searchParams = new URLSearchParams();
+      if (params?.page !== undefined) searchParams.set('page', String(params.page));
+      if (params?.limit !== undefined) searchParams.set('limit', String(params.limit));
+      if (params?.fetchStatus !== undefined) {
+        searchParams.set('fetchStatus', params.fetchStatus);
+      }
+      const query = searchParams.toString();
+      return fetchApi(`/subreddits${query ? `?${query}` : ''}`);
+    },
+
+    get: (name: string): Promise<Subreddit> => fetchApi(`/subreddits/${name}`),
+
+    fetchRules: (): Promise<SubredditFetchRulesResult> =>
+      fetchApi('/subreddits/fetch-rules', {
         method: 'POST',
       }),
   },

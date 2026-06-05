@@ -7,6 +7,7 @@ import type {
   F5botQueryParams,
   F5botSyncResult,
   F5botRateResult,
+  SubredditFetchRulesResult,
   PaginationMeta,
 } from '@/lib/types';
 
@@ -16,14 +17,17 @@ interface UseF5botMatchesReturn {
   loading: boolean;
   syncing: boolean;
   rating: boolean;
+  fetchingRules: boolean;
   error: string | null;
   syncResult: F5botSyncResult | null;
   rateResult: F5botRateResult | null;
+  fetchRulesResult: SubredditFetchRulesResult | null;
   params: F5botQueryParams;
   setParams: (params: F5botQueryParams) => void;
   setPage: (page: number) => void;
   sync: () => Promise<void>;
   rate: () => Promise<void>;
+  fetchRules: () => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -33,9 +37,12 @@ export function useF5botMatches(initialParams?: F5botQueryParams): UseF5botMatch
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [rating, setRating] = useState(false);
+  const [fetchingRules, setFetchingRules] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [syncResult, setSyncResult] = useState<F5botSyncResult | null>(null);
   const [rateResult, setRateResult] = useState<F5botRateResult | null>(null);
+  const [fetchRulesResult, setFetchRulesResult] =
+    useState<SubredditFetchRulesResult | null>(null);
   const [params, setParams] = useState<F5botQueryParams>(initialParams ?? { page: 1, limit: 20 });
   const mountedRef = useRef(true);
 
@@ -80,6 +87,7 @@ export function useF5botMatches(initialParams?: F5botQueryParams): UseF5botMatch
     setSyncing(true);
     setSyncResult(null);
     setRateResult(null);
+    setFetchRulesResult(null);
     setError(null);
     try {
       const result = await api.f5bot.sync();
@@ -100,6 +108,7 @@ export function useF5botMatches(initialParams?: F5botQueryParams): UseF5botMatch
     setRating(true);
     setRateResult(null);
     setSyncResult(null);
+    setFetchRulesResult(null);
     setError(null);
     try {
       const result = await api.f5bot.rate();
@@ -116,6 +125,27 @@ export function useF5botMatches(initialParams?: F5botQueryParams): UseF5botMatch
     }
   }, [fetchMatches]);
 
+  const fetchRules = useCallback(async () => {
+    setFetchingRules(true);
+    setFetchRulesResult(null);
+    setSyncResult(null);
+    setRateResult(null);
+    setError(null);
+    try {
+      const result = await api.subreddits.fetchRules();
+      setFetchRulesResult(result);
+      await fetchMatches();
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError('Failed to fetch subreddit rules');
+      }
+    } finally {
+      setFetchingRules(false);
+    }
+  }, [fetchMatches]);
+
   const refresh = useCallback(async () => {
     await fetchMatches();
   }, [fetchMatches]);
@@ -126,14 +156,17 @@ export function useF5botMatches(initialParams?: F5botQueryParams): UseF5botMatch
     loading,
     syncing,
     rating,
+    fetchingRules,
     error,
     syncResult,
     rateResult,
+    fetchRulesResult,
     params,
     setParams,
     setPage,
     sync,
     rate,
+    fetchRules,
     refresh,
   };
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { RefreshCw, Star } from 'lucide-react';
+import { RefreshCw, Star, BookOpen } from 'lucide-react';
 import { Header } from '@/components/layout';
 import { Button, Pagination } from '@/components/ui';
 import { F5botFilters, F5botTable } from '@/components/f5bot';
@@ -13,14 +13,17 @@ export default function F5botPage() {
     loading,
     syncing,
     rating,
+    fetchingRules,
     error,
     syncResult,
     rateResult,
+    fetchRulesResult,
     params,
     setParams,
     setPage,
     sync,
     rate,
+    fetchRules,
   } = useF5botMatches();
 
   return (
@@ -30,13 +33,17 @@ export default function F5botPage() {
         description="View and manage Reddit posts and comments from F5Bot"
         actions={
           <div className="flex gap-2">
-            <Button onClick={sync} loading={syncing} disabled={loading || rating}>
+            <Button onClick={sync} loading={syncing} disabled={loading || rating || fetchingRules}>
               {!syncing && <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />}
               {syncing ? 'Syncing...' : 'Sync Mailbox'}
             </Button>
-            <Button onClick={rate} loading={rating} disabled={loading || syncing} variant="secondary">
+            <Button onClick={rate} loading={rating} disabled={loading || syncing || fetchingRules} variant="secondary">
               {!rating && <Star className="mr-2 h-4 w-4" aria-hidden="true" />}
               {rating ? 'Rating...' : 'Rate Unrated'}
+            </Button>
+            <Button onClick={fetchRules} loading={fetchingRules} disabled={loading || syncing || rating} variant="secondary">
+              {!fetchingRules && <BookOpen className="mr-2 h-4 w-4" aria-hidden="true" />}
+              {fetchingRules ? 'Fetching...' : 'Fetch Rules'}
             </Button>
           </div>
         }
@@ -59,6 +66,14 @@ export default function F5botPage() {
         <div className="mb-4 p-4 bg-accent border border-border rounded-lg text-accent-foreground">
           Rating completed: {rateResult.rated} rated out of {rateResult.totalUnrated} unrated
           {rateResult.failed > 0 && `, ${rateResult.failed} failed`}
+        </div>
+      )}
+
+      {fetchRulesResult && (
+        <div className="mb-4 p-4 bg-accent border border-border rounded-lg text-accent-foreground">
+          Rules fetch completed: {fetchRulesResult.fetched} fetched, {fetchRulesResult.rated} rated out of{' '}
+          {fetchRulesResult.totalNew} new subreddits
+          {fetchRulesResult.failed > 0 && `, ${fetchRulesResult.failed} failed`}
         </div>
       )}
 

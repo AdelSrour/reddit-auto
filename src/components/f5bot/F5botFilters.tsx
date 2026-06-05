@@ -26,13 +26,15 @@ const RATING_OPTIONS = [
   { value: '10', label: '10' },
 ];
 
+const SUBREDDIT_SCORE_OPTIONS = RATING_OPTIONS;
+
 export function F5botFilters({ params, onParamsChange }: F5botFiltersProps) {
   const handleChange = (key: keyof F5botQueryParams, value: string) => {
     const newParams = { ...params, page: 1 };
 
     if (value === '') {
       delete newParams[key];
-    } else if (key === 'minRating') {
+    } else if (key === 'minRating' || key === 'minPostingEase') {
       newParams[key] = parseInt(value, 10);
     } else if (key === 'sourceType') {
       newParams[key] = value as F5botSourceType;
@@ -45,7 +47,7 @@ export function F5botFilters({ params, onParamsChange }: F5botFiltersProps) {
 
   return (
     <div className="bg-card p-4 rounded-lg border border-border mb-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <Input
           label="Keyword"
           placeholder="Filter by keyword"
@@ -69,11 +71,19 @@ export function F5botFilters({ params, onParamsChange }: F5botFiltersProps) {
         />
 
         <Select
-          label="Min Rating"
+          label="Min Match Rating"
           placeholder="Any rating"
           options={RATING_OPTIONS}
           value={params.minRating?.toString() ?? ''}
           onChange={(e) => handleChange('minRating', e.target.value)}
+        />
+
+        <Select
+          label="Min Subreddit Score"
+          placeholder="Any score"
+          options={SUBREDDIT_SCORE_OPTIONS}
+          value={params.minPostingEase?.toString() ?? ''}
+          onChange={(e) => handleChange('minPostingEase', e.target.value)}
         />
 
         <Input

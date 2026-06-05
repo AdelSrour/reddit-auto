@@ -112,12 +112,12 @@ export function AvailablePostsTable({
                   <span className="text-muted-foreground/70">-</span>
                 )}
               </TableCell>
-              <TableCell>
+              <TableCell className="max-w-xs overflow-hidden">
                 <a
                   href={post.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-foreground hover:text-primary line-clamp-1"
+                  className="block truncate text-foreground hover:text-primary"
                   title={post.title}
                 >
                   {post.title}

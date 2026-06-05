@@ -28,11 +28,6 @@ function formatDate(dateString: string): string {
   });
 }
 
-function truncate(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength) + '...';
-}
-
 function getRatingVariant(rating: number | null): 'success' | 'warning' | 'error' | 'default' {
   if (rating === null) return 'default';
   if (rating >= 7) return 'success';
@@ -119,8 +114,10 @@ export function F5botTable({ matches, loading }: F5botTableProps) {
                   <span className="text-muted-foreground/70">-</span>
                 )}
               </TableCell>
-              <TableCell className="max-w-xs">
-                <span title={match.title}>{truncate(match.title, 50)}</span>
+              <TableCell className="max-w-xs overflow-hidden">
+                <span className="block truncate" title={match.title}>
+                  {match.title}
+                </span>
               </TableCell>
               <TableCell className="text-muted-foreground">u/{match.author}</TableCell>
               <TableCell>

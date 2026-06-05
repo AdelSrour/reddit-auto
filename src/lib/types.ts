@@ -155,10 +155,9 @@ export interface Subreddit {
 }
 
 export interface SubredditFetchRulesResult {
+  started: boolean;
   totalNew: number;
-  fetched: number;
-  rated: number;
-  failed: number;
+  message: string;
 }
 
 export interface SubredditQueryParams {

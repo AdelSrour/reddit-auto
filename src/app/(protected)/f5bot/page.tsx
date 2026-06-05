@@ -71,9 +71,7 @@ export default function F5botPage() {
 
       {fetchRulesResult && (
         <div className="mb-4 p-4 bg-accent border border-border rounded-lg text-accent-foreground">
-          Rules fetch completed: {fetchRulesResult.fetched} fetched, {fetchRulesResult.rated} rated out of{' '}
-          {fetchRulesResult.totalNew} new subreddits
-          {fetchRulesResult.failed > 0 && `, ${fetchRulesResult.failed} failed`}
+          {fetchRulesResult.message}
         </div>
       )}
 

@@ -189,7 +189,7 @@ export function AvailablePostsTable({
                   </Button>
                   <Button
                     size="sm"
-                    variant="ghost"
+                    variant="secondary"
                     onClick={() => setMarkRepliedModalPost(post)}
                     disabled={actionsDisabled}
                   >

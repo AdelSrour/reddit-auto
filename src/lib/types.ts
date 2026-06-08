@@ -242,6 +242,11 @@ export interface ScheduleReplyInput {
   delayMinutes: number;
 }
 
+export interface MarkRepliedInput {
+  matchId: string;
+  replyUrl: string;
+}
+
 export interface ExecuteAutoReplyInput {
   matchId: string;
 }

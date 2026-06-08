@@ -48,6 +48,7 @@ export default function InstanceDetailPage({ params }: PageProps) {
     loading,
     postsLoading,
     replying,
+    markingReplied,
     error,
     refresh,
     postsParams,
@@ -57,6 +58,7 @@ export default function InstanceDetailPage({ params }: PageProps) {
     setScheduledPage,
     executeReply,
     scheduleReply,
+    markAsReplied,
     cancelScheduled,
     updateInstance,
   } = useAutomationInstance(id);
@@ -197,9 +199,11 @@ export default function InstanceDetailPage({ params }: PageProps) {
                 meta={postsMeta}
                 loading={postsLoading}
                 replying={replying}
+                markingReplied={markingReplied}
                 onPageChange={setPostsPage}
                 onReply={handleReply}
                 onSchedule={scheduleReply}
+                onMarkReplied={markAsReplied}
               />
             </CardContent>
           </Card>

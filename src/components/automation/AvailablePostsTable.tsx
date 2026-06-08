@@ -13,6 +13,7 @@ import {
   Pagination,
 } from '@/components/ui';
 import { ScheduleModal } from './ScheduleModal';
+import { MarkRepliedModal } from './MarkRepliedModal';
 import type { AvailablePost, PaginationMeta } from '@/lib/types';
 
 interface AvailablePostsTableProps {
@@ -20,9 +21,11 @@ interface AvailablePostsTableProps {
   meta: PaginationMeta | null;
   loading: boolean;
   replying: boolean;
+  markingReplied: boolean;
   onPageChange: (page: number) => void;
   onReply: (matchId: string) => Promise<void>;
   onSchedule: (matchId: string, delayMinutes: number) => Promise<void>;
+  onMarkReplied: (matchId: string, replyUrl: string) => Promise<void>;
 }
 
 export function AvailablePostsTable({
@@ -30,11 +33,14 @@ export function AvailablePostsTable({
   meta,
   loading,
   replying,
+  markingReplied,
   onPageChange,
   onReply,
   onSchedule,
+  onMarkReplied,
 }: AvailablePostsTableProps) {
   const [scheduleModalPost, setScheduleModalPost] = useState<AvailablePost | null>(null);
+  const [markRepliedModalPost, setMarkRepliedModalPost] = useState<AvailablePost | null>(null);
   const [replyingId, setReplyingId] = useState<string | null>(null);
 
   const handleReply = async (post: AvailablePost) => {
@@ -51,6 +57,14 @@ export function AvailablePostsTable({
     await onSchedule(scheduleModalPost.id, delayMinutes);
     setScheduleModalPost(null);
   };
+
+  const handleMarkReplied = async (replyUrl: string) => {
+    if (!markRepliedModalPost) return;
+    await onMarkReplied(markRepliedModalPost.id, replyUrl);
+    setMarkRepliedModalPost(null);
+  };
+
+  const actionsDisabled = replying || markingReplied;
 
   if (loading && posts.length === 0) {
     return (
@@ -161,7 +175,7 @@ export function AvailablePostsTable({
                     size="sm"
                     onClick={() => handleReply(post)}
                     loading={replyingId === post.id}
-                    disabled={replying}
+                    disabled={actionsDisabled}
                   >
                     Reply
                   </Button>
@@ -169,9 +183,17 @@ export function AvailablePostsTable({
                     size="sm"
                     variant="secondary"
                     onClick={() => setScheduleModalPost(post)}
-                    disabled={replying}
+                    disabled={actionsDisabled}
                   >
                     Schedule
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setMarkRepliedModalPost(post)}
+                    disabled={actionsDisabled}
+                  >
+                    Mark As Replied
                   </Button>
                 </div>
               </TableCell>
@@ -195,6 +217,14 @@ export function AvailablePostsTable({
           post={scheduleModalPost}
           onClose={() => setScheduleModalPost(null)}
           onSchedule={handleSchedule}
+        />
+      )}
+
+      {markRepliedModalPost && (
+        <MarkRepliedModal
+          post={markRepliedModalPost}
+          onClose={() => setMarkRepliedModalPost(null)}
+          onMarkReplied={handleMarkReplied}
         />
       )}
     </div>

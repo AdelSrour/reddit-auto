@@ -26,6 +26,7 @@ interface UseAutomationInstanceReturn {
   postsLoading: boolean;
   replying: boolean;
   scheduling: boolean;
+  markingReplied: boolean;
   error: string | null;
   refresh: () => Promise<void>;
   refreshPosts: () => Promise<void>;
@@ -36,6 +37,7 @@ interface UseAutomationInstanceReturn {
   setScheduledPage: (page: number) => void;
   executeReply: (matchId: string) => Promise<ActionResult<ReplyOutput>>;
   scheduleReply: (matchId: string, delayMinutes: number) => Promise<void>;
+  markAsReplied: (matchId: string, replyUrl: string) => Promise<void>;
   cancelScheduled: (scheduledId: string) => Promise<void>;
   updateInstance: (data: UpdateInstanceInput) => Promise<void>;
 }
@@ -52,6 +54,7 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
   const [postsLoading, setPostsLoading] = useState(false);
   const [replying, setReplying] = useState(false);
   const [scheduling, setScheduling] = useState(false);
+  const [markingReplied, setMarkingReplied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [postsParams, setPostsParams] = useState<F5botQueryParams>({
     page: 1,
@@ -196,6 +199,22 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
     }
   }, [id, refreshPosts]);
 
+  const markAsReplied = useCallback(async (matchId: string, replyUrl: string) => {
+    setMarkingReplied(true);
+    setError(null);
+    try {
+      await api.automation.instances.markReplied(id, { matchId, replyUrl });
+      await refreshPosts();
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      setMarkingReplied(false);
+    }
+  }, [id, refreshPosts]);
+
   const cancelScheduled = useCallback(async (scheduledId: string) => {
     try {
       await api.automation.cancelScheduled(scheduledId);
@@ -232,6 +251,7 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
     postsLoading,
     replying,
     scheduling,
+    markingReplied,
     error,
     refresh,
     refreshPosts,
@@ -242,6 +262,7 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
     setScheduledPage,
     executeReply,
     scheduleReply,
+    markAsReplied,
     cancelScheduled,
     updateInstance,
   };

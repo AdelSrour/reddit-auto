@@ -22,6 +22,7 @@ import type {
   ScheduledReply,
   ScheduleReplyInput,
   MarkRepliedInput,
+  GenerateReplyInput,
   ExecuteAutoReplyInput,
   ReplyOutput,
   AvailableAccount,
@@ -253,6 +254,12 @@ export const api = {
 
       markReplied: (id: string, input: MarkRepliedInput): Promise<AutomationReply> =>
         fetchApi(`/automation/instances/${id}/mark-replied`, {
+          method: 'POST',
+          body: JSON.stringify(input),
+        }),
+
+      generateReply: (id: string, input: GenerateReplyInput): Promise<{ replyText: string }> =>
+        fetchApi(`/automation/instances/${id}/generate-reply`, {
           method: 'POST',
           body: JSON.stringify(input),
         }),

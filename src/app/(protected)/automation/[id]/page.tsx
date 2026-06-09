@@ -195,6 +195,7 @@ export default function InstanceDetailPage({ params }: PageProps) {
           <Card>
             <CardContent className="p-4">
               <AvailablePostsTable
+                instanceId={id}
                 posts={posts}
                 meta={postsMeta}
                 loading={postsLoading}

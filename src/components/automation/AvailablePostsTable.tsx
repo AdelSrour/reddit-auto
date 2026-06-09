@@ -17,6 +17,7 @@ import { MarkRepliedModal } from './MarkRepliedModal';
 import type { AvailablePost, PaginationMeta } from '@/lib/types';
 
 interface AvailablePostsTableProps {
+  instanceId: string;
   posts: AvailablePost[];
   meta: PaginationMeta | null;
   loading: boolean;
@@ -25,10 +26,11 @@ interface AvailablePostsTableProps {
   onPageChange: (page: number) => void;
   onReply: (matchId: string) => Promise<void>;
   onSchedule: (matchId: string, delayMinutes: number) => Promise<void>;
-  onMarkReplied: (matchId: string, replyUrl: string) => Promise<void>;
+  onMarkReplied: (matchId: string, replyUrl: string, replyText: string) => Promise<void>;
 }
 
 export function AvailablePostsTable({
+  instanceId,
   posts,
   meta,
   loading,
@@ -58,9 +60,9 @@ export function AvailablePostsTable({
     setScheduleModalPost(null);
   };
 
-  const handleMarkReplied = async (replyUrl: string) => {
+  const handleMarkReplied = async (replyUrl: string, replyText: string) => {
     if (!markRepliedModalPost) return;
-    await onMarkReplied(markRepliedModalPost.id, replyUrl);
+    await onMarkReplied(markRepliedModalPost.id, replyUrl, replyText);
     setMarkRepliedModalPost(null);
   };
 
@@ -222,6 +224,7 @@ export function AvailablePostsTable({
 
       {markRepliedModalPost && (
         <MarkRepliedModal
+          instanceId={instanceId}
           post={markRepliedModalPost}
           onClose={() => setMarkRepliedModalPost(null)}
           onMarkReplied={handleMarkReplied}

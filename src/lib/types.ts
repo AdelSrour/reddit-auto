@@ -245,6 +245,11 @@ export interface ScheduleReplyInput {
 export interface MarkRepliedInput {
   matchId: string;
   replyUrl: string;
+  replyText?: string;
+}
+
+export interface GenerateReplyInput {
+  matchId: string;
 }
 
 export interface ExecuteAutoReplyInput {

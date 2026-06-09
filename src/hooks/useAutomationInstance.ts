@@ -37,7 +37,7 @@ interface UseAutomationInstanceReturn {
   setScheduledPage: (page: number) => void;
   executeReply: (matchId: string) => Promise<ActionResult<ReplyOutput>>;
   scheduleReply: (matchId: string, delayMinutes: number) => Promise<void>;
-  markAsReplied: (matchId: string, replyUrl: string) => Promise<void>;
+  markAsReplied: (matchId: string, replyUrl: string, replyText: string) => Promise<void>;
   cancelScheduled: (scheduledId: string) => Promise<void>;
   updateInstance: (data: UpdateInstanceInput) => Promise<void>;
 }
@@ -199,11 +199,11 @@ export function useAutomationInstance(id: string): UseAutomationInstanceReturn {
     }
   }, [id, refreshPosts]);
 
-  const markAsReplied = useCallback(async (matchId: string, replyUrl: string) => {
+  const markAsReplied = useCallback(async (matchId: string, replyUrl: string, replyText: string) => {
     setMarkingReplied(true);
     setError(null);
     try {
-      await api.automation.instances.markReplied(id, { matchId, replyUrl });
+      await api.automation.instances.markReplied(id, { matchId, replyUrl, replyText });
       await refreshPosts();
     } catch (err) {
       if (err instanceof ApiError) {

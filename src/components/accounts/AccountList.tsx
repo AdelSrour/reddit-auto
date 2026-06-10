@@ -63,9 +63,15 @@ export function AccountList({ accounts, onDelete }: AccountListProps) {
                 </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <Badge variant={account.isActive ? 'success' : 'error'}>
-                  {account.isActive ? 'Active' : 'Inactive'}
-                </Badge>
+                <div className="flex gap-2">
+                  {account.isBanned ? (
+                    <Badge variant="error">Banned</Badge>
+                  ) : (
+                    <Badge variant={account.isActive ? 'success' : 'warning'}>
+                      {account.isActive ? 'Active' : 'Inactive'}
+                    </Badge>
+                  )}
+                </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <Badge variant={account.gologinProfileId ? 'success' : 'warning'}>

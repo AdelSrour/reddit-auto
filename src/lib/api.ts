@@ -32,6 +32,7 @@ import type {
   StatsRefreshResult,
   GoLoginProfileInfo,
   OpenBrowserResponse,
+  AccountHealthCheckResult,
 } from './types';
 
 const API_BASE_URL = '/api/proxy';
@@ -126,6 +127,9 @@ export const api = {
 
     openBrowser: (accountId: string): Promise<OpenBrowserResponse> =>
       fetchApi(`/accounts/${accountId}/browser/open`, { method: 'POST' }),
+
+    checkHealth: (): Promise<AccountHealthCheckResult> =>
+      fetchApi('/accounts/health/check', { method: 'POST' }),
   },
 
   actions: {

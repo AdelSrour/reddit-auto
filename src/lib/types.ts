@@ -8,6 +8,7 @@ export interface Account {
   proxyUsername: string | null;
   proxyPassword: string | null;
   isActive: boolean;
+  isBanned: boolean;
   lastLoginAt: string | null;
   lastActionAt: string | null;
   createdAt: string;
@@ -71,6 +72,25 @@ export interface UpdateAccountInput {
   proxyUsername?: string;
   proxyPassword?: string;
   isActive?: boolean;
+  isBanned?: boolean;
+}
+
+export type AccountHealthStatus = 'Good' | 'Banned' | 'Error';
+
+export interface AccountHealthItem {
+  accountId: string;
+  username: string;
+  status: AccountHealthStatus;
+  error?: string;
+}
+
+export interface AccountHealthCheckResult {
+  checked: number;
+  skipped: number;
+  good: number;
+  banned: number;
+  errors: number;
+  results: AccountHealthItem[];
 }
 
 export interface ExecuteReplyInput {

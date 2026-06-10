@@ -2,17 +2,21 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Plus, RefreshCw, Download } from 'lucide-react';
+import { Plus, RefreshCw, Download, ShieldCheck } from 'lucide-react';
 import { Header } from '@/components/layout';
 import { Button } from '@/components/ui';
 import { AccountList, ImportProfilesModal } from '@/components/accounts';
 import { useAccounts } from '@/hooks';
 import { api } from '@/lib/api';
+import type { AccountHealthCheckResult } from '@/lib/types';
 
 export default function AccountsPage() {
   const { accounts, loading, error, deleteAccount, refresh } = useAccounts();
   const [populateLoading, setPopulateLoading] = useState(false);
   const [populateResult, setPopulateResult] = useState<string | null>(null);
+  const [healthLoading, setHealthLoading] = useState(false);
+  const [healthResult, setHealthResult] = useState<AccountHealthCheckResult | null>(null);
+  const [healthError, setHealthError] = useState<string | null>(null);
   const [importModalOpen, setImportModalOpen] = useState(false);
 
   const handleDelete = async (id: string) => {
@@ -22,6 +26,23 @@ export default function AccountsPage() {
       } catch (err) {
         alert(err instanceof Error ? err.message : 'Failed to delete account');
       }
+    }
+  };
+
+  const handleCheckHealth = async () => {
+    setHealthLoading(true);
+    setHealthResult(null);
+    setHealthError(null);
+    try {
+      const result = await api.accounts.checkHealth();
+      setHealthResult(result);
+      await refresh();
+    } catch (err) {
+      setHealthError(
+        err instanceof Error ? err.message : 'Failed to check accounts health',
+      );
+    } finally {
+      setHealthLoading(false);
     }
   };
 
@@ -76,6 +97,14 @@ export default function AccountsPage() {
         description="Manage your Reddit accounts"
         actions={
           <div className="flex gap-3">
+            <Button
+              variant="secondary"
+              onClick={handleCheckHealth}
+              loading={healthLoading}
+            >
+              <ShieldCheck className="mr-2 h-4 w-4" aria-hidden="true" />
+              Check accounts health
+            </Button>
             {hasUnlinkedAccounts && (
               <Button
                 variant="secondary"
@@ -102,6 +131,34 @@ export default function AccountsPage() {
           </div>
         }
       />
+
+      {healthError && (
+        <div className="mb-4 p-3 rounded-lg border border-destructive/20 bg-destructive/10 text-sm text-destructive">
+          {healthError}
+        </div>
+      )}
+
+      {healthResult && (
+        <div className="mb-4 p-3 rounded-lg border border-border bg-muted text-sm text-muted-foreground">
+          <p>
+            Checked {healthResult.checked} account{healthResult.checked === 1 ? '' : 's'}
+            {healthResult.skipped > 0 &&
+              ` (${healthResult.skipped} already banned, skipped)`}
+            : {healthResult.good} Good, {healthResult.banned} Banned
+            {healthResult.errors > 0 && `, ${healthResult.errors} Error${healthResult.errors === 1 ? '' : 's'}`}
+          </p>
+          {healthResult.results.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {healthResult.results.map((item) => (
+                <li key={item.accountId}>
+                  {item.username} ({item.status})
+                  {item.error && ` — ${item.error}`}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       {populateResult && (
         <div className="mb-4 p-3 rounded-lg border border-border bg-muted text-sm text-muted-foreground">

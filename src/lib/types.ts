@@ -302,6 +302,48 @@ export interface AllRepliesResponse {
   stats: ReplyStats;
 }
 
+export type ReplyHistorySortBy =
+  | 'completedAt'
+  | 'subreddit'
+  | 'accountUsername'
+  | 'title'
+  | 'views'
+  | 'upvotes'
+  | 'replies';
+
+export type SortOrder = 'asc' | 'desc';
+
+export interface ReplyHistoryEntry {
+  id: string;
+  accountUsername: string;
+  replyText: string;
+  replyUrl: string | null;
+  sourceUrl: string;
+  sourceType: string;
+  subreddit: string;
+  title: string;
+  completedAt: string;
+  createdAt: string;
+  views: number | null;
+  upvotes: number | null;
+  replies: number | null;
+  lastStatsAt: string | null;
+}
+
+export interface ReplyHistoryQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: ReplyHistorySortBy;
+  sortOrder?: SortOrder;
+  subreddit?: string;
+  accountUsername?: string;
+  fromDate?: string;
+  toDate?: string;
+}
+
+export type PaginatedReplyHistoryResponse = PaginatedResponse<ReplyHistoryEntry>;
+
 export interface DailyAutomationResult {
   syncResult: { emailsProcessed: number; newMatches: number } | null;
   ratingResult: { rated: number; failed: number } | null;

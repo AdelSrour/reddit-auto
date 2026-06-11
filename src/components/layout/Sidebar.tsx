@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Bot,
+  History,
   LayoutDashboard,
   Radio,
   Users,
@@ -17,6 +18,7 @@ const navigation: Array<{ name: string; href: string; icon: LucideIcon }> = [
   { name: 'Accounts', href: '/accounts', icon: Users },
   { name: 'F5Bot', href: '/f5bot', icon: Radio },
   { name: 'Automation', href: '/automation', icon: Bot },
+  { name: 'Reply History', href: '/reply-history', icon: History },
 ];
 
 interface SidebarProps {

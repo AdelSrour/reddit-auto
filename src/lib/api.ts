@@ -27,6 +27,9 @@ import type {
   ReplyOutput,
   AvailableAccount,
   AllRepliesResponse,
+  ReplyStats,
+  ReplyHistoryQueryParams,
+  PaginatedReplyHistoryResponse,
   DailyAutomationResult,
   DailyStatsSnapshot,
   StatsRefreshResult,
@@ -87,6 +90,26 @@ function buildF5botQueryString(params?: F5botQueryParams): string {
   if (params?.minRating !== undefined) searchParams.set('minRating', String(params.minRating));
   if (params?.minPostingEase !== undefined) {
     searchParams.set('minPostingEase', String(params.minPostingEase));
+  }
+  if (params?.fromDate !== undefined) searchParams.set('fromDate', params.fromDate);
+  if (params?.toDate !== undefined) searchParams.set('toDate', params.toDate);
+  return searchParams.toString();
+}
+
+function buildReplyHistoryQueryString(params?: ReplyHistoryQueryParams): string {
+  const searchParams = new URLSearchParams();
+  if (params?.page !== undefined) searchParams.set('page', String(params.page));
+  if (params?.limit !== undefined) searchParams.set('limit', String(params.limit));
+  if (params?.search !== undefined && params.search !== '') {
+    searchParams.set('search', params.search);
+  }
+  if (params?.sortBy !== undefined) searchParams.set('sortBy', params.sortBy);
+  if (params?.sortOrder !== undefined) searchParams.set('sortOrder', params.sortOrder);
+  if (params?.subreddit !== undefined && params.subreddit !== '') {
+    searchParams.set('subreddit', params.subreddit);
+  }
+  if (params?.accountUsername !== undefined && params.accountUsername !== '') {
+    searchParams.set('accountUsername', params.accountUsername);
   }
   if (params?.fromDate !== undefined) searchParams.set('fromDate', params.fromDate);
   if (params?.toDate !== undefined) searchParams.set('toDate', params.toDate);
@@ -194,6 +217,37 @@ export const api = {
       if (limit !== undefined) searchParams.set('limit', String(limit));
       const query = searchParams.toString();
       return fetchApi(`/automation/replies${query ? `?${query}` : ''}`);
+    },
+
+    getReplyStats: (): Promise<ReplyStats> =>
+      fetchApi('/automation/reply-stats'),
+
+    getReplyHistory: (
+      params?: ReplyHistoryQueryParams,
+    ): Promise<PaginatedReplyHistoryResponse> => {
+      const query = buildReplyHistoryQueryString(params);
+      return fetchApi(`/automation/reply-history${query ? `?${query}` : ''}`);
+    },
+
+    exportReplyHistory: async (params?: ReplyHistoryQueryParams): Promise<void> => {
+      const query = buildReplyHistoryQueryString(params);
+      const url = `${API_BASE_URL}/automation/reply-history/export${query ? `?${query}` : ''}`;
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new ApiError(response.status, errorText || 'Export failed');
+      }
+
+      const blob = await response.blob();
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = 'reply-history.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(downloadUrl);
     },
 
     instances: {

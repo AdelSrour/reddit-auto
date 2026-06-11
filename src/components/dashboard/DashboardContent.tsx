@@ -3,9 +3,8 @@
 import Link from 'next/link';
 import { Bot, Radio, type LucideIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui';
-import { useDashboardData } from '@/hooks';
+import { useReplyStats } from '@/hooks';
 import { ReplyStatsCards } from './ReplyStatsCards';
-import { RecentRepliesTable } from './RecentRepliesTable';
 import { StatsHistoryChart } from './StatsHistoryChart';
 
 const quickLinks: Array<{
@@ -29,7 +28,7 @@ const quickLinks: Array<{
 ];
 
 export function DashboardContent(): React.ReactNode {
-  const { replies, meta, stats, loading, error, setPage } = useDashboardData();
+  const { stats, loading, error } = useReplyStats();
 
   if (error) {
     return (
@@ -44,13 +43,6 @@ export function DashboardContent(): React.ReactNode {
       <ReplyStatsCards stats={stats} isLoading={loading} />
 
       <StatsHistoryChart days={30} />
-
-      <RecentRepliesTable
-        replies={replies}
-        meta={meta}
-        onPageChange={setPage}
-        isLoading={loading}
-      />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {quickLinks.map((item) => {

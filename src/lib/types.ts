@@ -288,9 +288,6 @@ export interface AvailableAccount {
 
 export interface ReplyStats {
   totalReplies: number;
-  successfulReplies: number;
-  failedReplies: number;
-  successRate: number;
   repliesToday: number;
   repliesThisWeek: number;
   topSubreddits: Array<{ subreddit: string; count: number }>;

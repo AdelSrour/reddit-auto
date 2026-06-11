@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from '@/components/ui';
 import type { ReplyStats } from '@/lib/types';
-import { MessageSquare, TrendingUp, CheckCircle, BarChart3 } from 'lucide-react';
+import { MessageSquare, TrendingUp, BarChart3 } from 'lucide-react';
 
 interface ReplyStatsCardsProps {
   stats: ReplyStats | null;
@@ -42,13 +42,12 @@ function StatCard({ title, value, subtitle, icon, isLoading }: StatCardProps): R
 
 export function ReplyStatsCards({ stats, isLoading }: ReplyStatsCardsProps): React.ReactNode {
   const topSubreddit = stats?.topSubreddits[0];
-  
+
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <StatCard
         title="Total Replies"
-        value={stats?.successfulReplies ?? 0}
-        subtitle={`${stats?.failedReplies ?? 0} failed`}
+        value={stats?.totalReplies ?? 0}
         icon={<MessageSquare size={24} />}
         isLoading={isLoading}
       />
@@ -57,13 +56,6 @@ export function ReplyStatsCards({ stats, isLoading }: ReplyStatsCardsProps): Rea
         value={stats?.repliesThisWeek ?? 0}
         subtitle={`${stats?.repliesToday ?? 0} today`}
         icon={<TrendingUp size={24} />}
-        isLoading={isLoading}
-      />
-      <StatCard
-        title="Success Rate"
-        value={`${stats?.successRate ?? 0}%`}
-        subtitle={`${stats?.totalReplies ?? 0} total attempts`}
-        icon={<CheckCircle size={24} />}
         isLoading={isLoading}
       />
       <StatCard

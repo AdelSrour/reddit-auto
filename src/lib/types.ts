@@ -193,6 +193,7 @@ export interface AutomationInstance {
   id: string;
   title: string;
   description: string | null;
+  replyInstructions: string | null;
   accountId: string;
   accountUsername: string;
   status: AutomationStatus;
@@ -204,6 +205,7 @@ export interface AutomationInstance {
 export interface CreateInstanceInput {
   title: string;
   description?: string;
+  replyInstructions?: string;
   accountId: string;
   repliesPerDay?: number;
 }
@@ -211,6 +213,7 @@ export interface CreateInstanceInput {
 export interface UpdateInstanceInput {
   title?: string;
   description?: string;
+  replyInstructions?: string;
   status?: AutomationStatus;
   repliesPerDay?: number;
 }

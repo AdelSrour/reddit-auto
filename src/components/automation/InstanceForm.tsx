@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Input, Card, CardContent, Select } from '@/components/ui';
+import { Button, Input, Textarea, Card, CardContent, Select } from '@/components/ui';
 import { api, ApiError } from '@/lib/api';
 import type { AutomationInstance, AvailableAccount } from '@/lib/types';
 
@@ -23,6 +23,9 @@ export function InstanceForm({
 
   const [title, setTitle] = useState(instance?.title ?? '');
   const [description, setDescription] = useState(instance?.description ?? '');
+  const [replyInstructions, setReplyInstructions] = useState(
+    instance?.replyInstructions ?? ''
+  );
   const [accountId, setAccountId] = useState(instance?.accountId ?? '');
   const [repliesPerDay, setRepliesPerDay] = useState(
     instance?.repliesPerDay ?? 5
@@ -38,6 +41,7 @@ export function InstanceForm({
         await api.automation.instances.create({
           title,
           description: description || undefined,
+          replyInstructions: replyInstructions || undefined,
           accountId,
           repliesPerDay,
         });
@@ -46,6 +50,7 @@ export function InstanceForm({
         await api.automation.instances.update(instance.id, {
           title,
           description: description || undefined,
+          replyInstructions: replyInstructions || undefined,
           repliesPerDay,
         });
         router.push(`/automation/${instance.id}`);
@@ -114,6 +119,25 @@ export function InstanceForm({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Optional description"
             />
+          </div>
+
+          <div>
+            <label
+              htmlFor="replyInstructions"
+              className="block text-sm font-medium text-foreground mb-1"
+            >
+              Reply instructions
+            </label>
+            <Textarea
+              id="replyInstructions"
+              rows={5}
+              value={replyInstructions}
+              onChange={(e) => setReplyInstructions(e.target.value)}
+              placeholder="e.g. Do not mention Tile Health at all"
+            />
+            <p className="mt-1 text-sm text-muted-foreground">
+              Optional. Applied when this automation generates replies.
+            </p>
           </div>
 
           <div>

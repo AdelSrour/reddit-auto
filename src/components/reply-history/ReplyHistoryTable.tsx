@@ -14,6 +14,7 @@ import {
 } from '@/components/ui';
 import type { ReplyHistoryEntry } from '@/lib/types';
 import { ExternalLink } from 'lucide-react';
+import { TileHealthMentionBadge } from '@/components/automation/TileHealthMentionBadge';
 
 interface ReplyHistoryTableProps {
   entries: ReplyHistoryEntry[];
@@ -88,8 +89,9 @@ export function ReplyHistoryTable({
                   <TableHead className="w-[120px]">Account</TableHead>
                   <TableHead className="w-[120px]">Subreddit</TableHead>
                   <TableHead>Post</TableHead>
-                    <TableHead className="hidden md:table-cell">Reply Preview</TableHead>
-                    <TableHead className="w-[70px] text-right">Views</TableHead>
+                  <TableHead className="hidden md:table-cell">Reply Preview</TableHead>
+                  <TableHead className="w-[110px]">Tile Health</TableHead>
+                  <TableHead className="w-[70px] text-right">Views</TableHead>
                     <TableHead className="w-[70px] text-right">Upvotes</TableHead>
                     <TableHead className="w-[70px] text-right">Replies</TableHead>
                     <TableHead className="w-[80px]">Time</TableHead>
@@ -124,6 +126,11 @@ export function ReplyHistoryTable({
                         >
                           {truncateText(entry.replyText, 60)}
                         </p>
+                      </TableCell>
+                      <TableCell>
+                        <TileHealthMentionBadge
+                          mentionsTileHealth={entry.mentionsTileHealth}
+                        />
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground text-right">
                         {formatStat(entry.views)}

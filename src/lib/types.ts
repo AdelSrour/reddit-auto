@@ -194,6 +194,7 @@ export interface AutomationInstance {
   title: string;
   description: string | null;
   replyInstructions: string | null;
+  tileHealthMentionEvery: number;
   accountId: string;
   accountUsername: string;
   status: AutomationStatus;
@@ -206,6 +207,7 @@ export interface CreateInstanceInput {
   title: string;
   description?: string;
   replyInstructions?: string;
+  tileHealthMentionEvery?: number;
   accountId: string;
   repliesPerDay?: number;
 }
@@ -214,6 +216,7 @@ export interface UpdateInstanceInput {
   title?: string;
   description?: string;
   replyInstructions?: string;
+  tileHealthMentionEvery?: number;
   status?: AutomationStatus;
   repliesPerDay?: number;
 }
@@ -243,6 +246,7 @@ export interface AutomationReply {
   replyUrl: string | null;
   replyText: string;
   status: string;
+  mentionsTileHealth: boolean | null;
   createdAt: string;
   completedAt: string | null;
 }
@@ -328,6 +332,7 @@ export interface ReplyHistoryEntry {
   upvotes: number | null;
   replies: number | null;
   lastStatsAt: string | null;
+  mentionsTileHealth: boolean | null;
 }
 
 export interface ReplyHistoryQueryParams {
@@ -340,6 +345,7 @@ export interface ReplyHistoryQueryParams {
   accountUsername?: string;
   fromDate?: string;
   toDate?: string;
+  mentionsTileHealth?: boolean;
 }
 
 export type PaginatedReplyHistoryResponse = PaginatedResponse<ReplyHistoryEntry>;

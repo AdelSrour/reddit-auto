@@ -113,6 +113,9 @@ function buildReplyHistoryQueryString(params?: ReplyHistoryQueryParams): string 
   }
   if (params?.fromDate !== undefined) searchParams.set('fromDate', params.fromDate);
   if (params?.toDate !== undefined) searchParams.set('toDate', params.toDate);
+  if (params?.mentionsTileHealth !== undefined) {
+    searchParams.set('mentionsTileHealth', String(params.mentionsTileHealth));
+  }
   return searchParams.toString();
 }
 

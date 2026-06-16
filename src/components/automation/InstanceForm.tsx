@@ -30,6 +30,9 @@ export function InstanceForm({
   const [repliesPerDay, setRepliesPerDay] = useState(
     instance?.repliesPerDay ?? 5
   );
+  const [tileHealthMentionEvery, setTileHealthMentionEvery] = useState(
+    instance?.tileHealthMentionEvery ?? 3
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +45,7 @@ export function InstanceForm({
           title,
           description: description || undefined,
           replyInstructions: replyInstructions || undefined,
+          tileHealthMentionEvery,
           accountId,
           repliesPerDay,
         });
@@ -51,6 +55,7 @@ export function InstanceForm({
           title,
           description: description || undefined,
           replyInstructions: replyInstructions || undefined,
+          tileHealthMentionEvery,
           repliesPerDay,
         });
         router.push(`/automation/${instance.id}`);
@@ -137,6 +142,27 @@ export function InstanceForm({
             />
             <p className="mt-1 text-sm text-muted-foreground">
               Optional. Applied when this automation generates replies.
+            </p>
+          </div>
+
+          <div>
+            <label
+              htmlFor="tileHealthMentionEvery"
+              className="block text-sm font-medium text-foreground mb-1"
+            >
+              Mention Tile Health every N replies
+            </label>
+            <Input
+              id="tileHealthMentionEvery"
+              type="number"
+              min={1}
+              max={20}
+              value={tileHealthMentionEvery}
+              onChange={(e) => setTileHealthMentionEvery(Number(e.target.value))}
+            />
+            <p className="mt-1 text-sm text-muted-foreground">
+              After N−1 replies without a Tile Health mention, the next generated
+              reply will require one.
             </p>
           </div>
 

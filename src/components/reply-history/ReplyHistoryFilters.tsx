@@ -25,6 +25,12 @@ const SORT_ORDER_OPTIONS: Array<{ value: SortOrder; label: string }> = [
   { value: 'asc', label: 'Ascending' },
 ];
 
+const TILE_HEALTH_OPTIONS = [
+  { value: '', label: 'All' },
+  { value: 'true', label: 'Mentioned' },
+  { value: 'false', label: 'Not mentioned' },
+];
+
 export function ReplyHistoryFilters({
   params,
   searchInput,
@@ -40,6 +46,12 @@ export function ReplyHistoryFilters({
       newParams.sortBy = value as ReplyHistorySortBy;
     } else if (key === 'sortOrder') {
       newParams.sortOrder = value as SortOrder;
+    } else if (key === 'mentionsTileHealth') {
+      if (value === '') {
+        delete newParams.mentionsTileHealth;
+      } else {
+        newParams.mentionsTileHealth = value === 'true';
+      }
     } else {
       (newParams as Record<string, unknown>)[key] = value;
     }
@@ -83,6 +95,17 @@ export function ReplyHistoryFilters({
           options={SORT_ORDER_OPTIONS}
           value={params.sortOrder ?? 'desc'}
           onChange={(e) => handleChange('sortOrder', e.target.value)}
+        />
+
+        <Select
+          label="Tile Health Mention"
+          options={TILE_HEALTH_OPTIONS}
+          value={
+            params.mentionsTileHealth === undefined
+              ? ''
+              : String(params.mentionsTileHealth)
+          }
+          onChange={(e) => handleChange('mentionsTileHealth', e.target.value)}
         />
 
         <Input

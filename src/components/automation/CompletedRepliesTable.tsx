@@ -11,6 +11,7 @@ import {
   Pagination,
 } from '@/components/ui';
 import type { AutomationReply, PaginationMeta } from '@/lib/types';
+import { TileHealthMentionBadge } from '@/components/automation/TileHealthMentionBadge';
 
 interface CompletedRepliesTableProps {
   replies: AutomationReply[];
@@ -45,6 +46,7 @@ export function CompletedRepliesTable({
             <TableHead>Subreddit</TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Tile Health</TableHead>
             <TableHead>Reply URL</TableHead>
             <TableHead>Completed At</TableHead>
           </TableRow>
@@ -76,6 +78,11 @@ export function CompletedRepliesTable({
                 >
                   {reply.status}
                 </Badge>
+              </TableCell>
+              <TableCell>
+                <TileHealthMentionBadge
+                  mentionsTileHealth={reply.mentionsTileHealth}
+                />
               </TableCell>
               <TableCell>
                 {reply.replyUrl ? (

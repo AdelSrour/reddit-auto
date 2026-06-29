@@ -86,7 +86,11 @@ export default function InstanceDetailPage({ params }: PageProps) {
   const handleReply = async (matchId: string) => {
     const result = await executeReply(matchId);
     if (!result.success) {
-      alert(`Reply failed: ${result.error?.message ?? 'Unknown error'}`);
+      const message =
+        result.error?.code === 'SOURCE_CONTENT_REMOVED'
+          ? 'This post or comment was removed from Reddit and has been deleted from matches.'
+          : (result.error?.message ?? 'Unknown error');
+      alert(`Reply failed: ${message}`);
     }
   };
 

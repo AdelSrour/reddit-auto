@@ -8,7 +8,18 @@ import { Button } from '@/components/ui';
 import { InstanceCard } from '@/components/automation';
 import { useAutomationInstances } from '@/hooks';
 import { api } from '@/lib/api';
-import type { DailyAutomationResult, StatsRefreshResult } from '@/lib/types';
+import type { DailyAutomationResult, StatsRefreshResult, SkipReason } from '@/lib/types';
+
+function formatSkipReason(reason: SkipReason): string {
+  switch (reason) {
+    case 'NO_AVAILABLE_POSTS':
+      return 'No available posts';
+    case 'DAILY_LIMIT_REACHED':
+      return 'Daily limit reached';
+    case 'INACTIVE':
+      return 'Inactive';
+  }
+}
 
 export default function AutomationPage() {
   const { instances, loading, error, refresh } = useAutomationInstances();
@@ -143,8 +154,19 @@ export default function AutomationPage() {
             )}
             <li>
               Scheduling: {dailyResult.schedulingResult.totalScheduled} replies scheduled across {dailyResult.schedulingResult.instancesProcessed} instances
-              {dailyResult.schedulingResult.instancesSkipped > 0 && ` (${dailyResult.schedulingResult.instancesSkipped} skipped)`}
             </li>
+            {dailyResult.schedulingResult.skippedInstances.length > 0 && (
+              <li>
+                Skipped instances:
+                <ul className="ml-4 mt-1">
+                  {dailyResult.schedulingResult.skippedInstances.map((skipped) => (
+                    <li key={skipped.instanceId}>
+                      {skipped.instanceTitle}: {formatSkipReason(skipped.reason)}
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            )}
           </ul>
           <button
             onClick={() => setDailyResult(null)}

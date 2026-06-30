@@ -350,6 +350,14 @@ export interface ReplyHistoryQueryParams {
 
 export type PaginatedReplyHistoryResponse = PaginatedResponse<ReplyHistoryEntry>;
 
+export type SkipReason = 'NO_AVAILABLE_POSTS' | 'DAILY_LIMIT_REACHED' | 'INACTIVE';
+
+export interface SkippedInstance {
+  instanceId: string;
+  instanceTitle: string;
+  reason: SkipReason;
+}
+
 export interface DailyAutomationResult {
   syncResult: { emailsProcessed: number; newMatches: number } | null;
   ratingResult: { rated: number; failed: number } | null;
@@ -357,6 +365,7 @@ export interface DailyAutomationResult {
     instancesProcessed: number;
     instancesSkipped: number;
     totalScheduled: number;
+    skippedInstances: SkippedInstance[];
   };
 }
 
